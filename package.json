@@ -1,0 +1,36 @@
+{
+    "name": "markdown-notes-tree",
+    "version": "1.0.0",
+    "description": "Generate Markdown trees that act as a table of contents for a folder structure with Markdown notes",
+    "main": "index.js",
+    "bin": {
+        "markdown-notes-tree": "cli.js"
+    },
+    "scripts": {
+        "start": "node index.js",
+        "test": "jest"
+    },
+    "keywords": [
+        "markdown",
+        "notes",
+        "tree"
+    ],
+    "author": "mistermicheels",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mistermicheels/markdown-notes-tree.git"
+    },
+    "license": "MIT",
+    "devDependencies": {
+        "fs-extra": "^8.1.0",
+        "jest": "^24.9.0",
+        "prettier": "^1.19.1"
+    },
+    "dependencies": {
+        "minimist": "^1.2.0"
+    },
+    "files": [
+        "cli.js",
+        "index.js"
+    ]
+}
