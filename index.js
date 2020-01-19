@@ -15,6 +15,7 @@ execute();
 
 function getOptions() {
     const defaultOptions = {
+        linkToSubdirectoryReadme: false,
         noSubdirectoryTrees: false,
         useTabs: false
     };
@@ -147,10 +148,28 @@ function getIndentationUnit() {
 }
 
 function getMarkdownLineForTreeNode(treeNode, parentPath) {
-    const linkText = treeNode.isDirectory ? `**${treeNode.title}**` : treeNode.title;
-    const fullPath = getFullPath(parentPath, treeNode.filename);
-    const linkTarget = fullPath.join("/");
+    const linkText = getLinkTextForTreeNode(treeNode);
+    const linkTarget = getLinkTargetTreeNode(treeNode, parentPath);
     return `- [${linkText}](${linkTarget})`;
+}
+
+function getLinkTextForTreeNode(treeNode) {
+    if (treeNode.isDirectory) {
+        return `**${treeNode.title}**`;
+    } else {
+        return treeNode.title;
+    }
+}
+
+function getLinkTargetTreeNode(treeNode, parentPath) {
+    const fullPath = getFullPath(parentPath, treeNode.filename);
+    let linkTarget = fullPath.join("/");
+
+    if (treeNode.isDirectory && options.linkToSubdirectoryReadme) {
+        linkTarget = linkTarget + "/README.md";
+    }
+
+    return linkTarget;
 }
 
 function getFullPath(parentPath, filename) {

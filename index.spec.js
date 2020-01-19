@@ -17,6 +17,10 @@ describe("markdown-notes-tree", () => {
         await executeTestScenario("ignores", []);
     });
 
+    test("it should allow linking directly to subdirectory README files", async () => {
+        await executeTestScenario("link-to-subdirectory-readme", ["--linkToSubdirectoryReadme"]);
+    });
+
     test("it should allow not writing subdirectory trees", async () => {
         await executeTestScenario("no-subdirectory-trees", ["--noSubdirectoryTrees"]);
     });
