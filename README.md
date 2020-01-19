@@ -28,7 +28,7 @@ Make sure to run the tool in the top-level directory of your Markdown notes fold
 The tool ignores:
 
 -   Folders starting with `.` or `_`
--   `node-modules` folders
+-   `node_modules` folders
 -   Files that are not Markdown files
 
 ## Options
