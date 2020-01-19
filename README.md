@@ -37,4 +37,5 @@ There are a limited number of command line arguments available:
 
 -   `--linkToSubdirectoryReadme`: When linking to a subdirectory, link directly to its `README.md` file. Note that this assumes that each subdirectory will actually have a `README.md` file. By default, the tool generates these automatically.
 -   `--noSubdirectoryTrees`: Don't write `README.md` files to subdirectories. Any existing `README.md` files in subdirectories will be ignored.
+-   `--orderNotesByTitle`: Order notes in the same (sub)directory by title instead of by filename.
 -   `--useTabs`: Use tabs (instead of the standard four spaces) for indentation.

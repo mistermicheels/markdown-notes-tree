@@ -17,6 +17,7 @@ function getOptions() {
     const defaultOptions = {
         linkToSubdirectoryReadme: false,
         noSubdirectoryTrees: false,
+        orderNotesByTitle: false,
         useTabs: false
     };
 
@@ -50,30 +51,48 @@ function buildTreeStartingAt(absolutePath) {
     const entries = fs.readdirSync(absolutePath, { withFileTypes: true });
     const directories = entries.filter(entry => entry.isDirectory());
     const files = entries.filter(entry => !entry.isDirectory());
-    const tree = [];
+
+    const treeNodesForDirectories = getTreeNodesForDirectories(directories, absolutePath);
+    const treeNodesForFiles = getTreeNodesForFiles(files, absolutePath);
+
+    return [...treeNodesForDirectories, ...treeNodesForFiles];
+}
+
+function getTreeNodesForDirectories(directories, absoluteParentPath) {
+    const treeNodes = [];
 
     for (const directory of directories) {
         if (shouldIncludeDirectory(directory.name)) {
-            tree.push({
+            treeNodes.push({
                 isDirectory: true,
                 title: directory.name,
                 filename: directory.name,
-                children: buildTreeStartingAt(path.join(absolutePath, directory.name))
+                children: buildTreeStartingAt(path.join(absoluteParentPath, directory.name))
             });
         }
     }
 
+    return treeNodes;
+}
+
+function getTreeNodesForFiles(files, absoluteParentPath) {
+    const treeNodes = [];
+
     for (const file of files) {
         if (shouldIncludeFile(file.name)) {
-            tree.push({
+            treeNodes.push({
                 isDirectory: false,
-                title: getTitleFromMarkdownFile(path.join(absolutePath, file.name)),
+                title: getTitleFromMarkdownFile(path.join(absoluteParentPath, file.name)),
                 filename: file.name
             });
         }
     }
 
-    return tree;
+    if (options.orderNotesByTitle) {
+        treeNodes.sort((a, b) => a.title.localeCompare(b.title, "en", { sensitivity: "base" }));
+    }
+
+    return treeNodes;
 }
 
 function shouldIncludeDirectory(name) {

@@ -25,6 +25,10 @@ describe("markdown-notes-tree", () => {
         await executeTestScenario("no-subdirectory-trees", ["--noSubdirectoryTrees"]);
     });
 
+    test("it should allow ordering notes by title", async () => {
+        await executeTestScenario("order-notes-by-title", ["--orderNotesByTitle"]);
+    });
+
     test("it should allow using tabs for indentation", async () => {
         await executeTestScenario("use-tabs", ["--useTabs"]);
     });
