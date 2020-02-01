@@ -16,5 +16,4 @@ This is some basic content.
         - [Title for file2a2](sub2/sub2a/file2a2.md)
     - [**sub2b**](sub2/sub2b)
         - [Title for file2b1](sub2/sub2b/file2b1.md)
-
-<!-- auto-generated notes tree ends here -->
+- [Title for file1](file1.md)

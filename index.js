@@ -145,22 +145,38 @@ function getTitleFromMarkdownFile(relativePath) {
 
 function writeTreeToMainReadme(tree) {
     const mainReadmePath = path.join(baseDirectoryPath, "README.md");
-    const currentReadmeContents = fs.readFileSync(mainReadmePath, { encoding: "utf-8" });
-    const notesTreeMarker = "<!-- auto-generated notes tree starts here -->";
-    const indexMarker = currentReadmeContents.indexOf(notesTreeMarker);
+    const currentContents = fs.readFileSync(mainReadmePath, { encoding: "utf-8" });
+    const treeStartMarker = "<!-- auto-generated notes tree starts here -->";
+    const treeEndMarker = "<!-- auto-generated notes tree ends here -->";
 
-    let contentsBeforeMarker;
+    const indexOfStartMarker = currentContents.indexOf(treeStartMarker);
+    const indexOfEndMarker = currentContents.indexOf(treeEndMarker);
 
-    if (indexMarker >= 0) {
-        contentsBeforeMarker = currentReadmeContents.substring(0, indexMarker);
+    let contentsBeforeStartMarker;
+    let contentsAfterEndMarker;
+
+    if (indexOfStartMarker >= 0) {
+        contentsBeforeStartMarker = currentContents.substring(0, indexOfStartMarker);
     } else {
-        contentsBeforeMarker = currentReadmeContents + endOfLine.repeat(2);
+        contentsBeforeStartMarker = currentContents + endOfLine.repeat(2);
+    }
+
+    if (indexOfEndMarker >= 0) {
+        contentsAfterEndMarker = currentContents.substring(indexOfEndMarker + treeEndMarker.length);
+    } else {
+        contentsAfterEndMarker = endOfLine;
     }
 
     const markdownForTree = getMarkdownForTree(tree);
 
     const newContents =
-        contentsBeforeMarker + notesTreeMarker + endOfLine.repeat(2) + markdownForTree + endOfLine;
+        contentsBeforeStartMarker +
+        treeStartMarker +
+        endOfLine.repeat(2) +
+        markdownForTree +
+        endOfLine.repeat(2) +
+        treeEndMarker +
+        contentsAfterEndMarker;
 
     fs.writeFileSync(mainReadmePath, newContents);
 }

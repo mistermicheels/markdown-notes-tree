@@ -17,3 +17,5 @@ This is some basic content.
     - [**sub2b**](sub2/sub2b/README.md)
         - [Title for file2b1](sub2/sub2b/file2b1.md)
 - [Title for file1](file1.md)
+
+<!-- auto-generated notes tree ends here -->

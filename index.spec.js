@@ -7,6 +7,14 @@ describe("markdown-notes-tree", () => {
         await executeTestScenario("basics", []);
     });
 
+    test("it should support a tree without end marker in the main README (as written by older versions)", async () => {
+        await executeTestScenario("content-after-main-tree", []);
+    });
+
+    test("it should preserve content after the tree in the main README", async () => {
+        await executeTestScenario("content-after-main-tree", []);
+    });
+
     test("it should ignore non-relevant files and folders", async () => {
         await executeTestScenario("default-ignores", []);
     });

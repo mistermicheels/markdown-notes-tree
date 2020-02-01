@@ -15,3 +15,5 @@ This is some basic content.
     - [b Title for file1b](sub1/file1b.md)
 - [A Title for file2](file2.md)
 - [B Title for file1](file1.md)
+
+<!-- auto-generated notes tree ends here -->
