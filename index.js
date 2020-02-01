@@ -154,6 +154,11 @@ function getTitleFromMarkdownFile(relativePath) {
 function writeTreeToMainReadme(tree) {
     const mainReadmePath = path.join(baseDirectoryPath, "README.md");
     const currentContents = fs.readFileSync(mainReadmePath, { encoding: "utf-8" });
+    const newContents = getNewMainReadmeFileContents(currentContents, tree);
+    fs.writeFileSync(mainReadmePath, newContents);
+}
+
+function getNewMainReadmeFileContents(currentContents, tree) {
     const treeStartMarker = "<!-- auto-generated notes tree starts here -->";
     const treeEndMarker = "<!-- auto-generated notes tree ends here -->";
 
@@ -177,16 +182,15 @@ function writeTreeToMainReadme(tree) {
 
     const markdownForTree = getMarkdownForTree(tree);
 
-    const newContents =
+    return (
         contentsBeforeStartMarker +
         treeStartMarker +
         endOfLine.repeat(2) +
         markdownForTree +
         endOfLine.repeat(2) +
         treeEndMarker +
-        contentsAfterEndMarker;
-
-    fs.writeFileSync(mainReadmePath, newContents);
+        contentsAfterEndMarker
+    );
 }
 
 function getMarkdownForTree(tree) {
@@ -271,24 +275,26 @@ function writeTreesForDirectoryAndChildren(parentPath, name, treeForDirectory) {
 }
 
 function writeTreeToDirectoryReadmeFile(parentPath, name, treeForDirectory) {
-    const autoGenerationComment = "<!-- this entire file is auto-generated -->";
-
-    const title = `# ${name}`;
-
-    const markdownForTree = getMarkdownForTree(treeForDirectory);
+    const fileContents = getDirectoryReadmeFileContents(name, treeForDirectory);
 
     const directoryPath = getFullPath(parentPath, name);
     const filePath = path.join(baseDirectoryPath, ...directoryPath, "README.md");
 
     console.log(`Writing to ${filePath}`);
+    fs.writeFileSync(filePath, fileContents);
+}
 
-    const fileContents =
+function getDirectoryReadmeFileContents(name, treeForDirectory) {
+    const autoGenerationComment = "<!-- this entire file is auto-generated -->";
+    const title = `# ${name}`;
+    const markdownForTree = getMarkdownForTree(treeForDirectory);
+
+    return (
         autoGenerationComment +
         endOfLine.repeat(2) +
         title +
         endOfLine.repeat(2) +
         markdownForTree +
-        endOfLine;
-
-    fs.writeFileSync(filePath, fileContents);
+        endOfLine
+    );
 }
