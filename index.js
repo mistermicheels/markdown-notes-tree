@@ -1,20 +1,21 @@
 "use strict";
 
 const minimist = require("minimist");
+const minimatch = require("minimatch");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
 
+// keep these globally instead of passing into virtually every function
 const endOfLine = os.EOL;
 const baseDirectoryPath = process.cwd();
-
-// keep this globally instead of passing into virtually every function
 const options = getOptions();
 
 execute();
 
 function getOptions() {
     const defaultOptions = {
+        ignore: [],
         linkToSubdirectoryReadme: false,
         noSubdirectoryTrees: false,
         orderNotesByTitle: false,
@@ -22,11 +23,22 @@ function getOptions() {
     };
 
     const parsedArguments = minimist(process.argv.slice(2));
+    parsedArguments.ignore = makeArray(parsedArguments.ignore);
 
     return {
         ...defaultOptions,
         ...parsedArguments
     };
+}
+
+function makeArray(value) {
+    if (!value) {
+        return [];
+    } else if (!Array.isArray(value)) {
+        return [value];
+    } else {
+        return value;
+    }
 }
 
 function execute() {
@@ -44,21 +56,25 @@ function execute() {
 }
 
 function buildTree() {
-    return buildTreeStartingAt(baseDirectoryPath);
+    return buildTreeStartingAt("");
 }
 
-function buildTreeStartingAt(absolutePath) {
-    const entries = fs.readdirSync(absolutePath, { withFileTypes: true });
+function buildTreeStartingAt(relativePath) {
+    const entries = fs.readdirSync(getAbsolutePath(relativePath), { withFileTypes: true });
     const directories = entries.filter(entry => entry.isDirectory());
     const files = entries.filter(entry => !entry.isDirectory());
 
-    const treeNodesForDirectories = getTreeNodesForDirectories(directories, absolutePath);
-    const treeNodesForFiles = getTreeNodesForFiles(files, absolutePath);
+    const treeNodesForDirectories = getTreeNodesForDirectories(directories, relativePath);
+    const treeNodesForFiles = getTreeNodesForFiles(files, relativePath);
 
     return [...treeNodesForDirectories, ...treeNodesForFiles];
 }
 
-function getTreeNodesForDirectories(directories, absoluteParentPath) {
+function getAbsolutePath(relativePath) {
+    return path.join(baseDirectoryPath, relativePath);
+}
+
+function getTreeNodesForDirectories(directories, relativeParentPath) {
     const treeNodes = [];
 
     for (const directory of directories) {
@@ -67,7 +83,7 @@ function getTreeNodesForDirectories(directories, absoluteParentPath) {
                 isDirectory: true,
                 title: directory.name,
                 filename: directory.name,
-                children: buildTreeStartingAt(path.join(absoluteParentPath, directory.name))
+                children: buildTreeStartingAt(path.join(relativeParentPath, directory.name))
             });
         }
     }
@@ -75,14 +91,14 @@ function getTreeNodesForDirectories(directories, absoluteParentPath) {
     return treeNodes;
 }
 
-function getTreeNodesForFiles(files, absoluteParentPath) {
+function getTreeNodesForFiles(files, relativeParentPath) {
     const treeNodes = [];
 
     for (const file of files) {
-        if (shouldIncludeFile(file.name)) {
+        if (shouldIncludeFile(file.name, relativeParentPath)) {
             treeNodes.push({
                 isDirectory: false,
-                title: getTitleFromMarkdownFile(path.join(absoluteParentPath, file.name)),
+                title: getTitleFromMarkdownFile(path.join(relativeParentPath, file.name)),
                 filename: file.name
             });
         }
@@ -99,11 +115,24 @@ function shouldIncludeDirectory(name) {
     return !name.startsWith(".") && !name.startsWith("_") && name !== "node_modules";
 }
 
-function shouldIncludeFile(name) {
-    return name.endsWith(".md") && name !== "README.md";
+function shouldIncludeFile(name, relativeParentPath) {
+    if (!name.endsWith(".md") || name === "README.md") {
+        return false;
+    }
+
+    const relativePath = path.join(relativeParentPath, name);
+
+    for (const globToIgnore of options.ignore) {
+        if (minimatch(relativePath, globToIgnore)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
-function getTitleFromMarkdownFile(absolutePath) {
+function getTitleFromMarkdownFile(relativePath) {
+    const absolutePath = getAbsolutePath(relativePath);
     const fullContents = fs.readFileSync(absolutePath, { encoding: "utf-8" });
     const firstLine = fullContents.split(endOfLine, 1)[0];
 

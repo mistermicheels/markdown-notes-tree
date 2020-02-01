@@ -7,14 +7,27 @@ describe("markdown-notes-tree", () => {
         await executeTestScenario("basics", []);
     });
 
+    test("it should ignore non-relevant files and folders", async () => {
+        await executeTestScenario("default-ignores", []);
+    });
+
     test("it should throw an error if a Markdown file does not start with the title", async () => {
         await expect(executeTestScenario("error-no-title", [])).rejects.toThrow(
             /No title found for Markdown file [\S]+\.md/
         );
     });
 
-    test("it should ignore non-relevant files and folders", async () => {
-        await executeTestScenario("ignores", []);
+    test("it should allow adding custom file ignores using a single glob expression", async () => {
+        await executeTestScenario("ignore", ["--ignore", "**/CONTRIBUTING.md"]);
+    });
+
+    test("it should allow adding custom file ignores using multiple glob expressions", async () => {
+        await executeTestScenario("ignore", [
+            "--ignore",
+            "CONTRIBUTING.md",
+            "--ignore",
+            "sub1/CONTRIBUTING.md"
+        ]);
     });
 
     test("it should allow linking directly to subdirectory README files", async () => {
@@ -33,10 +46,6 @@ describe("markdown-notes-tree", () => {
         await executeTestScenario("use-tabs", ["--useTabs"]);
     });
 
-    afterAll(() => {
-        removeGeneratedFolders();
-    });
-
     async function executeTestScenario(folderName, args) {
         const folderPath = path.join(__dirname, "test-data", folderName);
         const inputFolderPath = path.join(folderPath, "input");
@@ -48,12 +57,16 @@ describe("markdown-notes-tree", () => {
             errorOnExist: true
         });
 
-        await runMain(resultFolderPath, args);
-        checkResult(resultFolderPath, expectedFolderPath);
+        try {
+            await runMain(resultFolderPath, args);
+            checkResult(resultFolderPath, expectedFolderPath);
 
-        // check that second run doesn't change anything
-        await runMain(resultFolderPath, args);
-        checkResult(resultFolderPath, expectedFolderPath);
+            // check that second run doesn't change anything
+            await runMain(resultFolderPath, args);
+            checkResult(resultFolderPath, expectedFolderPath);
+        } finally {
+            fsExtra.removeSync(resultFolderPath);
+        }
     }
 
     async function runMain(resultFolderPath, args) {
@@ -115,15 +128,5 @@ describe("markdown-notes-tree", () => {
 
             return { name, fullPath, isDirectory, contents };
         });
-    }
-
-    function removeGeneratedFolders() {
-        const testDataFolderPath = path.join(__dirname, "test-data");
-        const entries = fsExtra.readdirSync(testDataFolderPath);
-
-        for (const entry of entries) {
-            const resultFolderPath = path.join(testDataFolderPath, entry, "result");
-            fsExtra.removeSync(resultFolderPath);
-        }
     }
 });
