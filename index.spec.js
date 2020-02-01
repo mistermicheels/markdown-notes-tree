@@ -38,6 +38,10 @@ describe("markdown-notes-tree", () => {
         ]);
     });
 
+    test("it should allow using a custom ignore to ignore an entire folder", async () => {
+        await executeTestScenario("ignore-folder", ["--ignore", "exclude-this-folder"]);
+    });
+
     test("it should allow linking directly to subdirectory README files", async () => {
         await executeTestScenario("link-to-subdirectory-readme", ["--linkToSubdirectoryReadme"]);
     });

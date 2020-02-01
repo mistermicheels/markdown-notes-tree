@@ -78,7 +78,7 @@ function getTreeNodesForDirectories(directories, relativeParentPath) {
     const treeNodes = [];
 
     for (const directory of directories) {
-        if (shouldIncludeDirectory(directory.name)) {
+        if (shouldIncludeDirectory(directory.name, relativeParentPath)) {
             treeNodes.push({
                 isDirectory: true,
                 title: directory.name,
@@ -111,8 +111,12 @@ function getTreeNodesForFiles(files, relativeParentPath) {
     return treeNodes;
 }
 
-function shouldIncludeDirectory(name) {
-    return !name.startsWith(".") && !name.startsWith("_") && name !== "node_modules";
+function shouldIncludeDirectory(name, relativeParentPath) {
+    if (name.startsWith(".") || name.startsWith("_") || name === "node_modules") {
+        return false;
+    }
+
+    return shouldIncludeBasedOnIgnores(name, relativeParentPath);
 }
 
 function shouldIncludeFile(name, relativeParentPath) {
@@ -120,6 +124,10 @@ function shouldIncludeFile(name, relativeParentPath) {
         return false;
     }
 
+    return shouldIncludeBasedOnIgnores(name, relativeParentPath);
+}
+
+function shouldIncludeBasedOnIgnores(name, relativeParentPath) {
     const relativePath = path.join(relativeParentPath, name);
 
     for (const globToIgnore of options.ignore) {

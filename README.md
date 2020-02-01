@@ -33,16 +33,16 @@ The tool ignores:
 -   `node_modules` folders
 -   Files that are not Markdown files
 
-You can specify additional files to ignore using the `--ignore` command line argument (see below).
+You can specify additional files or folders to ignore using the `--ignore` command line argument (see below).
 
 ## Options
 
 There are a limited number of command line arguments available:
 
--   `--ignore`: Specify glob pattern for additional files to ignore. You can use this argument multiple times in order to specify multiple glob patterns.
+-   `--ignore`: Specify glob pattern for additional files or folders to ignore. You can use this argument multiple times in order to specify multiple glob patterns.
     -   Example: `markdown-notes-tree --ignore **/CONTRIBUTING.md`
     -   Example: `markdown-notes-tree --ignore CONTRIBUTING.md --ignore sub1/CONTRIBUTING.md`
-    -   Example: `markdown-notes-tree --ignore exclude-this-folder/**`
+    -   Example: `markdown-notes-tree --ignore exclude-this-folder`
 -   `--linkToSubdirectoryReadme`: When linking to a subdirectory, link directly to its `README.md` file. Note that this assumes that each subdirectory will actually have a `README.md` file. By default, the tool generates these automatically.
     -   Example: `markdown-notes-tree --linkToSubdirectoryReadme`
 -   `--noSubdirectoryTrees`: Don't write `README.md` files to subdirectories. Any existing `README.md` files in subdirectories will be ignored.
