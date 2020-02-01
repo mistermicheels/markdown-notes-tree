@@ -221,7 +221,7 @@ function getIndentationUnit() {
 
 function getMarkdownLineForTreeNode(treeNode, parentPath) {
     const linkText = getLinkTextForTreeNode(treeNode);
-    const linkTarget = getLinkTargetTreeNode(treeNode, parentPath);
+    const linkTarget = getLinkTargetForTreeNode(treeNode, parentPath);
     return `- [${linkText}](${linkTarget})`;
 }
 
@@ -233,7 +233,7 @@ function getLinkTextForTreeNode(treeNode) {
     }
 }
 
-function getLinkTargetTreeNode(treeNode, parentPath) {
+function getLinkTargetForTreeNode(treeNode, parentPath) {
     const fullPath = getFullPath(parentPath, treeNode.filename);
     let linkTarget = fullPath.join("/");
 
