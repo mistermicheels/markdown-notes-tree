@@ -83,7 +83,7 @@ describe("markdown-notes-tree", () => {
 
     async function runMain(resultFolderPath, args) {
         return new Promise((resolve, reject) => {
-            const forked = childProcess.fork(path.join(__dirname, "index.js"), args || [], {
+            const forked = childProcess.fork(path.join(__dirname, "src/index.js"), args || [], {
                 cwd: resultFolderPath,
                 silent: true
             });
