@@ -26,11 +26,11 @@ describe("markdown-notes-tree", () => {
     });
 
     test("it should allow adding custom file ignores using a single glob expression", async () => {
-        await executeTestScenario("ignore", ["--ignore", "**/CONTRIBUTING.md"]);
+        await executeTestScenario("ignore-files", ["--ignore", "**/CONTRIBUTING.md"]);
     });
 
     test("it should allow adding custom file ignores using multiple glob expressions", async () => {
-        await executeTestScenario("ignore", [
+        await executeTestScenario("ignore-files", [
             "--ignore",
             "CONTRIBUTING.md",
             "--ignore",
