@@ -1,45 +1,18 @@
 "use strict";
 
-const minimist = require("minimist");
 const minimatch = require("minimatch");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
 
+const optionsFunctions = require("./options");
+
 // keep these globally instead of passing into virtually every function
 const endOfLine = os.EOL;
 const baseDirectoryPath = process.cwd();
-const options = getOptions();
+const options = optionsFunctions.getOptions(process.argv.slice(2));
 
 execute();
-
-function getOptions() {
-    const defaultOptions = {
-        ignore: [],
-        linkToSubdirectoryReadme: false,
-        noSubdirectoryTrees: false,
-        orderNotesByTitle: false,
-        useTabs: false
-    };
-
-    const parsedArguments = minimist(process.argv.slice(2));
-    parsedArguments.ignore = makeArray(parsedArguments.ignore);
-
-    return {
-        ...defaultOptions,
-        ...parsedArguments
-    };
-}
-
-function makeArray(value) {
-    if (!value) {
-        return [];
-    } else if (!Array.isArray(value)) {
-        return [value];
-    } else {
-        return value;
-    }
-}
 
 function execute() {
     console.log("Processing files in order to build notes tree");
@@ -130,8 +103,8 @@ function shouldIncludeFile(name, relativeParentPath) {
 function shouldIncludeBasedOnIgnores(name, relativeParentPath) {
     const relativePath = path.join(relativeParentPath, name);
 
-    for (const globToIgnore of options.ignore) {
-        if (minimatch(relativePath, globToIgnore)) {
+    for (const ignoredGlob of options.ignoredGlobs) {
+        if (minimatch(relativePath, ignoredGlob)) {
             return false;
         }
     }
