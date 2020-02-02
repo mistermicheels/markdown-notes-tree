@@ -12,6 +12,7 @@ function getOptions(commandLineArguments) {
         linkToSubdirectoryReadme: parsedArguments.linkToSubdirectoryReadme || false,
         noSubdirectoryTrees: parsedArguments.noSubdirectoryTrees || false,
         orderNotesByTitle: parsedArguments.orderNotesByTitle || false,
+        silent: parsedArguments.silent || false,
         useTabs: parsedArguments.useTabs || false
     };
 }

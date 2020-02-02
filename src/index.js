@@ -10,13 +10,10 @@ const treeWriter = require("./tree-writer");
 module.exports = { execute };
 
 /** Note: this function is not intended to be run in parallel */
-function execute(commandLineArguments = [], overrides = { silent: false }) {
+function execute(commandLineArguments = []) {
     const endOfLine = os.EOL;
     const options = optionsParser.getOptions(commandLineArguments);
-
-    if (overrides.silent) {
-        logger.disableLogging();
-    }
+    initializeLogger(options);
 
     logger.log("Processing files in order to build notes tree");
     const tree = treeBuilder.buildTree(options);
@@ -30,4 +27,12 @@ function execute(commandLineArguments = [], overrides = { silent: false }) {
     }
 
     logger.log("Finished execution");
+}
+
+function initializeLogger(options) {
+    if (options.silent) {
+        logger.disableLogging();
+    } else {
+        logger.enableLogging();
+    }
 }

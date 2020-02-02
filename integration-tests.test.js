@@ -71,11 +71,11 @@ describe("markdown-notes-tree", () => {
         changeWorkingDirectoryTo(resultFolderPath);
 
         try {
-            markdownNotesTree.execute(args, { silent: true });
+            markdownNotesTree.execute([...args, "--silent"]);
             checkResult(resultFolderPath, expectedFolderPath);
 
             // check that second run doesn't change anything
-            markdownNotesTree.execute(args, { silent: true });
+            markdownNotesTree.execute([...args, "--silent"]);
             checkResult(resultFolderPath, expectedFolderPath);
         } finally {
             changeWorkingDirectoryTo(originalWorkingDirectory);

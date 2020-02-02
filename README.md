@@ -49,5 +49,7 @@ There are a limited number of command line arguments available:
     -   Example: `markdown-notes-tree --noSubdirectoryTrees`
 -   `--orderNotesByTitle`: Order notes in the same (sub)directory by title instead of by filename.
     -   Example: `markdown-notes-tree --orderNotesByTitle`
+-   `--silent`: Don't log to the console during execution.
+    -   Example: `markdown-notes-tree --silent`
 -   `--useTabs`: Use tabs (instead of the standard four spaces) for indentation.
     -   Example: `markdown-notes-tree --useTabs`
