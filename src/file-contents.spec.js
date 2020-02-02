@@ -176,7 +176,7 @@ describe("fileContents", () => {
 
             expect(() =>
                 fileContents.getNewMainReadmeContents(currentContents, "markdownForTree", endOfLine)
-            ).toThrow();
+            ).toThrow("Invalid file structure: tree end marker found before tree start marker");
         });
     });
 

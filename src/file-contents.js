@@ -116,8 +116,6 @@ function getNewMainReadmeContents(currentContents, markdownForTree, endOfLine) {
     );
 }
 
-function getNewMainReadmeContentsAfterEndMarker(currentContents, indexStartMarker, endOfLine) {}
-
 function getDirectoryReadmeContents(name, markdownForTree, endOfLine) {
     const autoGenerationComment = "<!-- this entire file is auto-generated -->";
     const title = `# ${name}`;
