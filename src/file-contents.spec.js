@@ -1,29 +1,29 @@
 const dedent = require("dedent");
 
-const fileContentsFunctions = require("./file-contents");
+const fileContents = require("./file-contents");
 
-describe("file contents functions", () => {
+describe("fileContents", () => {
     const endOfLine = "\n";
 
     describe("getTitleFromMarkdownContents", () => {
         test("it should support CRLF line endings", () => {
             const contents = "# test" + "\r\n" + "second line";
-            expect(fileContentsFunctions.getTitleFromMarkdownContents(contents)).toBe("test");
+            expect(fileContents.getTitleFromMarkdownContents(contents)).toBe("test");
         });
 
         test("it should support LF line endings", () => {
             const contents = "# test" + "\n" + "second line";
-            expect(fileContentsFunctions.getTitleFromMarkdownContents(contents)).toBe("test");
+            expect(fileContents.getTitleFromMarkdownContents(contents)).toBe("test");
         });
 
         test("it should support CR line endings", () => {
             const contents = "# test" + "\r" + "second line";
-            expect(fileContentsFunctions.getTitleFromMarkdownContents(contents)).toBe("test");
+            expect(fileContents.getTitleFromMarkdownContents(contents)).toBe("test");
         });
 
         test("it should return undefined if the first line doesn't have a title", () => {
             const contents = "some non-title content";
-            expect(fileContentsFunctions.getTitleFromMarkdownContents(contents)).toBeUndefined();
+            expect(fileContents.getTitleFromMarkdownContents(contents)).toBeUndefined();
         });
     });
 
@@ -47,7 +47,7 @@ describe("file contents functions", () => {
             const expected =
                 "- [**sub1**](sub1)" + endOfLine + "    - [Title for file1a](sub1/file1a.md)";
 
-            const result = fileContentsFunctions.getMarkdownForTree(tree, endOfLine, {
+            const result = fileContents.getMarkdownForTree(tree, endOfLine, {
                 linkToSubdirectoryReadme: false,
                 useTabs: false
             });
@@ -61,7 +61,7 @@ describe("file contents functions", () => {
                 endOfLine +
                 "    - [Title for file1a](sub1/file1a.md)";
 
-            const result = fileContentsFunctions.getMarkdownForTree(tree, endOfLine, {
+            const result = fileContents.getMarkdownForTree(tree, endOfLine, {
                 linkToSubdirectoryReadme: true,
                 useTabs: false
             });
@@ -73,7 +73,7 @@ describe("file contents functions", () => {
             const expected =
                 "- [**sub1**](sub1)" + endOfLine + "\t- [Title for file1a](sub1/file1a.md)";
 
-            const result = fileContentsFunctions.getMarkdownForTree(tree, endOfLine, {
+            const result = fileContents.getMarkdownForTree(tree, endOfLine, {
                 linkToSubdirectoryReadme: false,
                 useTabs: true
             });
@@ -86,7 +86,7 @@ describe("file contents functions", () => {
         test("it should handle current contents without a tree", () => {
             const currentContents = "some content";
 
-            const result = fileContentsFunctions.getNewMainReadmeFileContents(
+            const result = fileContents.getNewMainReadmeFileContents(
                 currentContents,
                 "markdownForTree",
                 endOfLine
@@ -116,7 +116,7 @@ describe("file contents functions", () => {
                 
                 content after tree`) + endOfLine;
 
-            const result = fileContentsFunctions.getNewMainReadmeFileContents(
+            const result = fileContents.getNewMainReadmeFileContents(
                 currentContents,
                 "markdownForTree",
                 endOfLine
@@ -144,7 +144,7 @@ describe("file contents functions", () => {
                 
                 markdownForTree`) + endOfLine;
 
-            const result = fileContentsFunctions.getNewMainReadmeFileContents(
+            const result = fileContents.getNewMainReadmeFileContents(
                 currentContents,
                 "markdownForTree",
                 endOfLine
@@ -165,7 +165,7 @@ describe("file contents functions", () => {
 
     describe("getDirectoryReadmeFileContents", () => {
         test("it should return the contents with marker, title and tree", () => {
-            const result = fileContentsFunctions.getDirectoryReadmeFileContents(
+            const result = fileContents.getDirectoryReadmeFileContents(
                 "name",
                 "markdownForTree",
                 endOfLine

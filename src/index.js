@@ -4,9 +4,9 @@ const path = require("path");
 const fs = require("fs");
 const os = require("os");
 
-const optionsFunctions = require("./options");
-const ignoresFunctions = require("./ignores");
-const fileContentsFunctions = require("./file-contents");
+const optionsParser = require("./options-parser");
+const ignores = require("./ignores");
+const fileContents = require("./file-contents");
 
 execute();
 
@@ -14,7 +14,7 @@ function execute() {
     const endOfLine = os.EOL;
 
     const commandLineArguments = process.argv.slice(2);
-    const options = optionsFunctions.getOptions(commandLineArguments);
+    const options = optionsParser.getOptions(commandLineArguments);
 
     console.log("Processing files in order to build notes tree");
     const tree = buildTree(options);
@@ -52,7 +52,7 @@ function getTreeNodesForDirectories(directories, relativeParentPath, options) {
     const treeNodes = [];
 
     for (const directory of directories) {
-        if (!ignoresFunctions.shouldIgnoreDirectory(directory.name, relativeParentPath, options)) {
+        if (!ignores.shouldIgnoreDirectory(directory.name, relativeParentPath, options)) {
             const relativePath = path.join(relativeParentPath, directory.name);
 
             treeNodes.push({
@@ -71,7 +71,7 @@ function getTreeNodesForFiles(files, relativeParentPath, options) {
     const treeNodes = [];
 
     for (const file of files) {
-        if (!ignoresFunctions.shouldIgnoreFile(file.name, relativeParentPath, options)) {
+        if (!ignores.shouldIgnoreFile(file.name, relativeParentPath, options)) {
             treeNodes.push({
                 isDirectory: false,
                 title: getTitleFromMarkdownFileOrThrow(path.join(relativeParentPath, file.name)),
@@ -90,7 +90,7 @@ function getTreeNodesForFiles(files, relativeParentPath, options) {
 function getTitleFromMarkdownFileOrThrow(relativePath) {
     const absolutePath = getAbsolutePath(relativePath);
     const contents = fs.readFileSync(absolutePath, { encoding: "utf-8" });
-    const title = fileContentsFunctions.getTitleFromMarkdownContents(contents);
+    const title = fileContents.getTitleFromMarkdownContents(contents);
 
     if (!title) {
         throw new Error(`No title found for Markdown file ${absolutePath}`);
@@ -102,9 +102,9 @@ function getTitleFromMarkdownFileOrThrow(relativePath) {
 function writeTreeToMainReadme(tree, endOfLine, options) {
     const mainReadmePath = getAbsolutePath("README.md");
     const currentContents = fs.readFileSync(mainReadmePath, { encoding: "utf-8" });
-    const markdownForTree = fileContentsFunctions.getMarkdownForTree(tree, endOfLine, options);
+    const markdownForTree = fileContents.getMarkdownForTree(tree, endOfLine, options);
 
-    const newContents = fileContentsFunctions.getNewMainReadmeFileContents(
+    const newContents = fileContents.getNewMainReadmeFileContents(
         currentContents,
         markdownForTree,
         endOfLine
@@ -138,22 +138,13 @@ function writeTreesForDirectory(parentPathParts, name, treeForDirectory, endOfLi
 }
 
 function writeTreeToDirectoryReadme(parentPathParts, name, treeForDirectory, endOfLine, options) {
-    const markdownForTree = fileContentsFunctions.getMarkdownForTree(
-        treeForDirectory,
-        endOfLine,
-        options
-    );
-
-    const fileContents = fileContentsFunctions.getDirectoryReadmeFileContents(
-        name,
-        markdownForTree,
-        endOfLine
-    );
+    const markdownForTree = fileContents.getMarkdownForTree(treeForDirectory, endOfLine, options);
+    const contents = fileContents.getDirectoryReadmeFileContents(name, markdownForTree, endOfLine);
 
     const filePathParts = [...parentPathParts, name, "README.md"];
     const relativeFilePath = path.join(...filePathParts);
     const absoluteFilePath = getAbsolutePath(relativeFilePath);
 
     console.log(`Writing to ${absoluteFilePath}`);
-    fs.writeFileSync(absoluteFilePath, fileContents);
+    fs.writeFileSync(absoluteFilePath, contents);
 }
