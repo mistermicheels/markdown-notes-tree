@@ -6,6 +6,7 @@ const os = require("os");
 
 const optionsFunctions = require("./options");
 const ignoresFunctions = require("./ignores");
+const fileContentsFunctions = require("./file-contents");
 
 // keep these globally instead of passing into virtually every function
 const endOfLine = os.EOL;
@@ -99,43 +100,15 @@ function getTitleFromMarkdownFile(relativePath) {
 function writeTreeToMainReadme(tree) {
     const mainReadmePath = path.join(baseDirectoryPath, "README.md");
     const currentContents = fs.readFileSync(mainReadmePath, { encoding: "utf-8" });
-    const newContents = getNewMainReadmeFileContents(currentContents, tree);
-    fs.writeFileSync(mainReadmePath, newContents);
-}
-
-function getNewMainReadmeFileContents(currentContents, tree) {
-    const treeStartMarker = "<!-- auto-generated notes tree starts here -->";
-    const treeEndMarker = "<!-- auto-generated notes tree ends here -->";
-
-    const indexOfStartMarker = currentContents.indexOf(treeStartMarker);
-    const indexOfEndMarker = currentContents.indexOf(treeEndMarker);
-
-    let contentsBeforeStartMarker;
-    let contentsAfterEndMarker;
-
-    if (indexOfStartMarker >= 0) {
-        contentsBeforeStartMarker = currentContents.substring(0, indexOfStartMarker);
-    } else {
-        contentsBeforeStartMarker = currentContents + endOfLine.repeat(2);
-    }
-
-    if (indexOfEndMarker >= 0) {
-        contentsAfterEndMarker = currentContents.substring(indexOfEndMarker + treeEndMarker.length);
-    } else {
-        contentsAfterEndMarker = endOfLine;
-    }
-
     const markdownForTree = getMarkdownForTree(tree);
 
-    return (
-        contentsBeforeStartMarker +
-        treeStartMarker +
-        endOfLine.repeat(2) +
-        markdownForTree +
-        endOfLine.repeat(2) +
-        treeEndMarker +
-        contentsAfterEndMarker
+    const newContents = fileContentsFunctions.getNewMainReadmeFileContents(
+        currentContents,
+        markdownForTree,
+        endOfLine
     );
+
+    fs.writeFileSync(mainReadmePath, newContents);
 }
 
 function getMarkdownForTree(tree) {
@@ -220,26 +193,17 @@ function writeTreesForDirectoryAndChildren(parentPath, name, treeForDirectory) {
 }
 
 function writeTreeToDirectoryReadmeFile(parentPath, name, treeForDirectory) {
-    const fileContents = getDirectoryReadmeFileContents(name, treeForDirectory);
+    const markdownForTree = getMarkdownForTree(treeForDirectory);
+
+    const fileContents = fileContentsFunctions.getDirectoryReadmeFileContents(
+        name,
+        markdownForTree,
+        endOfLine
+    );
 
     const directoryPath = getFullPath(parentPath, name);
     const filePath = path.join(baseDirectoryPath, ...directoryPath, "README.md");
 
     console.log(`Writing to ${filePath}`);
     fs.writeFileSync(filePath, fileContents);
-}
-
-function getDirectoryReadmeFileContents(name, treeForDirectory) {
-    const autoGenerationComment = "<!-- this entire file is auto-generated -->";
-    const title = `# ${name}`;
-    const markdownForTree = getMarkdownForTree(treeForDirectory);
-
-    return (
-        autoGenerationComment +
-        endOfLine.repeat(2) +
-        title +
-        endOfLine.repeat(2) +
-        markdownForTree +
-        endOfLine
-    );
 }
