@@ -13,7 +13,7 @@ function writeTreeToMainReadme(tree, endOfLine, options) {
     const currentContents = fs.readFileSync(mainReadmePath, { encoding: "utf-8" });
     const markdownForTree = fileContents.getMarkdownForTree(tree, endOfLine, options);
 
-    const newContents = fileContents.getNewMainReadmeFileContents(
+    const newContents = fileContents.getNewMainReadmeContents(
         currentContents,
         markdownForTree,
         endOfLine
@@ -48,7 +48,7 @@ function writeTreesForDirectory(parentPathParts, name, treeForDirectory, endOfLi
 
 function writeTreeToDirectoryReadme(parentPathParts, name, treeForDirectory, endOfLine, options) {
     const markdownForTree = fileContents.getMarkdownForTree(treeForDirectory, endOfLine, options);
-    const contents = fileContents.getDirectoryReadmeFileContents(name, markdownForTree, endOfLine);
+    const contents = fileContents.getDirectoryReadmeContents(name, markdownForTree, endOfLine);
 
     const filePathParts = [...parentPathParts, name, "README.md"];
     const relativeFilePath = path.join(...filePathParts);

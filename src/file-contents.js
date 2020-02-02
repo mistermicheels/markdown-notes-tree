@@ -3,8 +3,8 @@
 module.exports = {
     getTitleFromMarkdownContents,
     getMarkdownForTree,
-    getNewMainReadmeFileContents,
-    getDirectoryReadmeFileContents
+    getNewMainReadmeContents,
+    getDirectoryReadmeContents
 };
 
 function getTitleFromMarkdownContents(contents) {
@@ -81,24 +81,26 @@ function getLinkTargetForTreeNode(treeNode, parentPathParts, { linkToSubdirector
     return linkTarget;
 }
 
-function getNewMainReadmeFileContents(currentContents, markdownForTree, endOfLine) {
+function getNewMainReadmeContents(currentContents, markdownForTree, endOfLine) {
     const treeStartMarker = "<!-- auto-generated notes tree starts here -->";
     const treeEndMarker = "<!-- auto-generated notes tree ends here -->";
 
-    const indexOfStartMarker = currentContents.indexOf(treeStartMarker);
-    const indexOfEndMarker = currentContents.indexOf(treeEndMarker);
-
+    const indexStartMarker = currentContents.indexOf(treeStartMarker);
     let contentsBeforeStartMarker;
-    let contentsAfterEndMarker;
 
-    if (indexOfStartMarker >= 0) {
-        contentsBeforeStartMarker = currentContents.substring(0, indexOfStartMarker);
+    if (indexStartMarker >= 0) {
+        contentsBeforeStartMarker = currentContents.substring(0, indexStartMarker);
     } else {
         contentsBeforeStartMarker = currentContents + endOfLine.repeat(2);
     }
 
-    if (indexOfEndMarker >= 0) {
-        contentsAfterEndMarker = currentContents.substring(indexOfEndMarker + treeEndMarker.length);
+    const indexEndMarker = currentContents.indexOf(treeEndMarker);
+    let contentsAfterEndMarker;
+
+    if (indexEndMarker >= 0 && indexEndMarker < indexStartMarker) {
+        throw new Error("Invalid file structure: tree end marker found before tree start marker");
+    } else if (indexEndMarker >= 0) {
+        contentsAfterEndMarker = currentContents.substring(indexEndMarker + treeEndMarker.length);
     } else {
         contentsAfterEndMarker = endOfLine;
     }
@@ -114,7 +116,9 @@ function getNewMainReadmeFileContents(currentContents, markdownForTree, endOfLin
     );
 }
 
-function getDirectoryReadmeFileContents(name, markdownForTree, endOfLine) {
+function getNewMainReadmeContentsAfterEndMarker(currentContents, indexStartMarker, endOfLine) {}
+
+function getDirectoryReadmeContents(name, markdownForTree, endOfLine) {
     const autoGenerationComment = "<!-- this entire file is auto-generated -->";
     const title = `# ${name}`;
 

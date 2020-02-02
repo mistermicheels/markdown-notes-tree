@@ -84,11 +84,11 @@ describe("fileContents", () => {
         });
     });
 
-    describe("getNewMainReadmeFileContents", () => {
+    describe("getNewMainReadmeContents", () => {
         test("it should handle current contents without a tree", () => {
             const currentContents = "some content";
 
-            const result = fileContents.getNewMainReadmeFileContents(
+            const result = fileContents.getNewMainReadmeContents(
                 currentContents,
                 "markdownForTree",
                 endOfLine
@@ -118,7 +118,7 @@ describe("fileContents", () => {
                 
                 content after tree`) + endOfLine;
 
-            const result = fileContents.getNewMainReadmeFileContents(
+            const result = fileContents.getNewMainReadmeContents(
                 currentContents,
                 "markdownForTree",
                 endOfLine
@@ -146,7 +146,7 @@ describe("fileContents", () => {
                 
                 markdownForTree`) + endOfLine;
 
-            const result = fileContents.getNewMainReadmeFileContents(
+            const result = fileContents.getNewMainReadmeContents(
                 currentContents,
                 "markdownForTree",
                 endOfLine
@@ -163,11 +163,26 @@ describe("fileContents", () => {
 
             expect(result).toBe(expected);
         });
+
+        test("it should fail for current contents having an end marker before start marker", () => {
+            const currentContents =
+                dedent(`some content
+
+                <!-- auto-generated notes tree ends here -->
+                
+                <!-- auto-generated notes tree starts here -->
+                
+                markdownForTree`) + endOfLine;
+
+            expect(() =>
+                fileContents.getNewMainReadmeContents(currentContents, "markdownForTree", endOfLine)
+            ).toThrow();
+        });
     });
 
-    describe("getDirectoryReadmeFileContents", () => {
+    describe("getDirectoryReadmeContents", () => {
         test("it should return the contents with marker, title and tree", () => {
-            const result = fileContents.getDirectoryReadmeFileContents(
+            const result = fileContents.getDirectoryReadmeContents(
                 "name",
                 "markdownForTree",
                 endOfLine
