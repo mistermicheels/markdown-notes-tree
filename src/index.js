@@ -8,38 +8,38 @@ const optionsFunctions = require("./options");
 const ignoresFunctions = require("./ignores");
 const fileContentsFunctions = require("./file-contents");
 
-// keep these globally instead of passing into virtually every function
-const options = optionsFunctions.getOptions(process.argv.slice(2));
-
 execute();
 
 function execute() {
     const endOfLine = os.EOL;
 
+    const commandLineArguments = process.argv.slice(2);
+    const options = optionsFunctions.getOptions(commandLineArguments);
+
     console.log("Processing files in order to build notes tree");
-    const tree = buildTree();
+    const tree = buildTree(options);
     console.log("Writing notes tree to main README file");
-    writeTreeToMainReadme(tree, endOfLine);
+    writeTreeToMainReadme(tree, endOfLine, options);
 
     if (!options.noSubdirectoryTrees) {
         console.log("Writing trees for directories");
-        writeTreesForDirectories(tree, endOfLine);
+        writeTreesForDirectories(tree, endOfLine, options);
     }
 
     console.log("Finished execution");
 }
 
-function buildTree() {
-    return buildTreeStartingAt("");
+function buildTree(options) {
+    return buildTreeStartingAt("", options);
 }
 
-function buildTreeStartingAt(relativePath) {
+function buildTreeStartingAt(relativePath, options) {
     const entries = fs.readdirSync(getAbsolutePath(relativePath), { withFileTypes: true });
     const directories = entries.filter(entry => entry.isDirectory());
     const files = entries.filter(entry => !entry.isDirectory());
 
-    const treeNodesForDirectories = getTreeNodesForDirectories(directories, relativePath);
-    const treeNodesForFiles = getTreeNodesForFiles(files, relativePath);
+    const treeNodesForDirectories = getTreeNodesForDirectories(directories, relativePath, options);
+    const treeNodesForFiles = getTreeNodesForFiles(files, relativePath, options);
 
     return [...treeNodesForDirectories, ...treeNodesForFiles];
 }
@@ -48,16 +48,18 @@ function getAbsolutePath(relativePath) {
     return path.join(process.cwd(), relativePath);
 }
 
-function getTreeNodesForDirectories(directories, relativeParentPath) {
+function getTreeNodesForDirectories(directories, relativeParentPath, options) {
     const treeNodes = [];
 
     for (const directory of directories) {
         if (!ignoresFunctions.shouldIgnoreDirectory(directory.name, relativeParentPath, options)) {
+            const relativePath = path.join(relativeParentPath, directory.name);
+
             treeNodes.push({
                 isDirectory: true,
                 title: directory.name,
                 filename: directory.name,
-                children: buildTreeStartingAt(path.join(relativeParentPath, directory.name))
+                children: buildTreeStartingAt(relativePath, options)
             });
         }
     }
@@ -65,7 +67,7 @@ function getTreeNodesForDirectories(directories, relativeParentPath) {
     return treeNodes;
 }
 
-function getTreeNodesForFiles(files, relativeParentPath) {
+function getTreeNodesForFiles(files, relativeParentPath, options) {
     const treeNodes = [];
 
     for (const file of files) {
@@ -88,7 +90,7 @@ function getTreeNodesForFiles(files, relativeParentPath) {
 function getTitleFromMarkdownFileOrThrow(relativePath) {
     const absolutePath = getAbsolutePath(relativePath);
     const contents = fs.readFileSync(absolutePath, { encoding: "utf-8" });
-    const title = getTitleFromMarkdownContents(contents);
+    const title = fileContentsFunctions.getTitleFromMarkdownContents(contents);
 
     if (!title) {
         throw new Error(`No title found for Markdown file ${absolutePath}`);
@@ -97,20 +99,10 @@ function getTitleFromMarkdownFileOrThrow(relativePath) {
     return title;
 }
 
-function getTitleFromMarkdownContents(contents) {
-    const firstLine = contents.split(/\r\n|\r|\n/, 1)[0];
-
-    if (firstLine.startsWith("# ")) {
-        return firstLine.substring(2);
-    } else {
-        return undefined;
-    }
-}
-
-function writeTreeToMainReadme(tree, endOfLine) {
+function writeTreeToMainReadme(tree, endOfLine, options) {
     const mainReadmePath = getAbsolutePath("README.md");
     const currentContents = fs.readFileSync(mainReadmePath, { encoding: "utf-8" });
-    const markdownForTree = getMarkdownForTree(tree, endOfLine);
+    const markdownForTree = fileContentsFunctions.getMarkdownForTree(tree, endOfLine, options);
 
     const newContents = fileContentsFunctions.getNewMainReadmeFileContents(
         currentContents,
@@ -121,87 +113,36 @@ function writeTreeToMainReadme(tree, endOfLine) {
     fs.writeFileSync(mainReadmePath, newContents);
 }
 
-function getMarkdownForTree(tree, endOfLine) {
-    return getMarkdownLinesForTree(tree, []).join(endOfLine);
-}
-
-function getMarkdownLinesForTree(tree, parentPathParts) {
-    const markdownLines = [];
-    const indentationUnit = getIndentationUnit();
-
-    for (const treeNode of tree) {
-        markdownLines.push(getMarkdownLineForTreeNode(treeNode, parentPathParts));
-
-        if (treeNode.isDirectory) {
-            const fullPathParts = [...parentPathParts, treeNode.filename];
-            const linesForChildren = getMarkdownLinesForTree(treeNode.children, fullPathParts);
-            const indentedLines = linesForChildren.map(line => indentationUnit + line);
-            markdownLines.push(...indentedLines);
-        }
-    }
-
-    return markdownLines;
-}
-
-function getIndentationUnit() {
-    // Markdown standard: either four spaces or tabs
-    if (options.useTabs) {
-        return "\t";
-    } else {
-        return " ".repeat(4);
-    }
-}
-
-function getMarkdownLineForTreeNode(treeNode, parentPath) {
-    const linkText = getLinkTextForTreeNode(treeNode);
-    const linkTarget = getLinkTargetForTreeNode(treeNode, parentPath);
-    return `- [${linkText}](${linkTarget})`;
-}
-
-function getLinkTextForTreeNode(treeNode) {
-    if (treeNode.isDirectory) {
-        return `**${treeNode.title}**`;
-    } else {
-        return treeNode.title;
-    }
-}
-
-function getLinkTargetForTreeNode(treeNode, parentPathParts) {
-    const fullPathParts = [...parentPathParts, treeNode.filename];
-    let linkTarget = fullPathParts.join("/");
-
-    if (treeNode.isDirectory && options.linkToSubdirectoryReadme) {
-        linkTarget = linkTarget + "/README.md";
-    }
-
-    return linkTarget;
-}
-
-function writeTreesForDirectories(mainTree, endOfLine) {
+function writeTreesForDirectories(mainTree, endOfLine, options) {
     for (const treeNode of mainTree) {
         if (treeNode.isDirectory) {
-            writeTreesForDirectoryAndChildren([], treeNode.filename, treeNode.children, endOfLine);
+            writeTreesForDirectory([], treeNode.filename, treeNode.children, endOfLine, options);
         }
     }
 }
 
-function writeTreesForDirectoryAndChildren(parentPathParts, name, treeForDirectory, endOfLine) {
-    writeTreeToDirectoryReadmeFile(parentPathParts, name, treeForDirectory, endOfLine);
+function writeTreesForDirectory(parentPathParts, name, treeForDirectory, endOfLine, options) {
+    writeTreeToDirectoryReadme(parentPathParts, name, treeForDirectory, endOfLine, options);
 
     for (const treeNode of treeForDirectory) {
         if (treeNode.isDirectory) {
-            writeTreesForDirectoryAndChildren(
+            writeTreesForDirectory(
                 [...parentPathParts, name],
                 treeNode.filename,
                 treeNode.children,
-                endOfLine
+                endOfLine,
+                options
             );
         }
     }
 }
 
-function writeTreeToDirectoryReadmeFile(parentPathParts, name, treeForDirectory, endOfLine) {
-    const markdownForTree = getMarkdownForTree(treeForDirectory, endOfLine);
+function writeTreeToDirectoryReadme(parentPathParts, name, treeForDirectory, endOfLine, options) {
+    const markdownForTree = fileContentsFunctions.getMarkdownForTree(
+        treeForDirectory,
+        endOfLine,
+        options
+    );
 
     const fileContents = fileContentsFunctions.getDirectoryReadmeFileContents(
         name,
