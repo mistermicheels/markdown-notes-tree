@@ -2,31 +2,33 @@ const path = require("path");
 const fsExtra = require("fs-extra");
 const childProcess = require("child_process");
 
+const markdownNotesTree = require("./src/index");
+
 describe("markdown-notes-tree", () => {
-    test("it should have correct basic functionality", async () => {
-        await executeTestScenario("basics", []);
+    test("it should have correct basic functionality", () => {
+        executeTestScenario("basics", []);
     });
 
-    test("it should preserve content after the tree in the main README", async () => {
-        await executeTestScenario("content-after-main-tree", []);
+    test("it should preserve content after the tree in the main README", () => {
+        executeTestScenario("content-after-main-tree", []);
     });
 
-    test("it should ignore non-relevant files and folders", async () => {
-        await executeTestScenario("default-ignores", []);
+    test("it should ignore non-relevant files and folders", () => {
+        executeTestScenario("default-ignores", []);
     });
 
-    test("it should throw an error if a Markdown file does not start with the title", async () => {
-        await expect(executeTestScenario("error-no-title", [])).rejects.toThrow(
+    test("it should throw an error if a Markdown file does not start with the title", () => {
+        expect(() => executeTestScenario("error-no-title", [])).toThrow(
             /No title found for Markdown file [\S]+\.md/
         );
     });
 
-    test("it should allow adding custom file ignores using a single glob expression", async () => {
-        await executeTestScenario("ignore-files", ["--ignore", "**/CONTRIBUTING.md"]);
+    test("it should allow adding custom file ignores using a single glob expression", () => {
+        executeTestScenario("ignore-files", ["--ignore", "**/CONTRIBUTING.md"]);
     });
 
-    test("it should allow adding custom file ignores using multiple glob expressions", async () => {
-        await executeTestScenario("ignore-files", [
+    test("it should allow adding custom file ignores using multiple glob expressions", () => {
+        executeTestScenario("ignore-files", [
             "--ignore",
             "CONTRIBUTING.md",
             "--ignore",
@@ -34,27 +36,27 @@ describe("markdown-notes-tree", () => {
         ]);
     });
 
-    test("it should allow using a custom ignore to ignore an entire folder", async () => {
-        await executeTestScenario("ignore-folder", ["--ignore", "exclude-this-folder"]);
+    test("it should allow using a custom ignore to ignore an entire folder", () => {
+        executeTestScenario("ignore-folder", ["--ignore", "exclude-this-folder"]);
     });
 
-    test("it should allow linking directly to subdirectory README files", async () => {
-        await executeTestScenario("link-to-subdirectory-readme", ["--linkToSubdirectoryReadme"]);
+    test("it should allow linking directly to subdirectory README files", () => {
+        executeTestScenario("link-to-subdirectory-readme", ["--linkToSubdirectoryReadme"]);
     });
 
-    test("it should allow not writing subdirectory trees", async () => {
-        await executeTestScenario("no-subdirectory-trees", ["--noSubdirectoryTrees"]);
+    test("it should allow not writing subdirectory trees", () => {
+        executeTestScenario("no-subdirectory-trees", ["--noSubdirectoryTrees"]);
     });
 
-    test("it should allow ordering notes by title", async () => {
-        await executeTestScenario("order-notes-by-title", ["--orderNotesByTitle"]);
+    test("it should allow ordering notes by title", () => {
+        executeTestScenario("order-notes-by-title", ["--orderNotesByTitle"]);
     });
 
-    test("it should allow using tabs for indentation", async () => {
-        await executeTestScenario("use-tabs", ["--useTabs"]);
+    test("it should allow using tabs for indentation", () => {
+        executeTestScenario("use-tabs", ["--useTabs"]);
     });
 
-    async function executeTestScenario(folderName, args) {
+    function executeTestScenario(folderName, args) {
         const folderPath = path.join(__dirname, "test-data", folderName);
         const inputFolderPath = path.join(folderPath, "input");
         const expectedFolderPath = path.join(folderPath, "expected");
@@ -65,40 +67,24 @@ describe("markdown-notes-tree", () => {
             errorOnExist: true
         });
 
+        const originalWorkingDirectory = process.cwd();
+        changeWorkingDirectoryTo(resultFolderPath);
+
         try {
-            await runMain(resultFolderPath, args);
+            markdownNotesTree.execute(args, { silent: true });
             checkResult(resultFolderPath, expectedFolderPath);
 
             // check that second run doesn't change anything
-            await runMain(resultFolderPath, args);
+            markdownNotesTree.execute(args, { silent: true });
             checkResult(resultFolderPath, expectedFolderPath);
         } finally {
+            changeWorkingDirectoryTo(originalWorkingDirectory);
             fsExtra.removeSync(resultFolderPath);
         }
     }
 
-    async function runMain(resultFolderPath, args) {
-        return new Promise((resolve, reject) => {
-            const forked = childProcess.fork(path.join(__dirname, "src/index.js"), args || [], {
-                cwd: resultFolderPath,
-                silent: true
-            });
-
-            let receivedErrorText = "";
-
-            forked.stderr.on("data", data => {
-                receivedErrorText = receivedErrorText + data.toString();
-            });
-
-            forked.on("exit", code => {
-                if (code === 0) {
-                    resolve();
-                } else {
-                    // the message will be a lot longer than the original error message, but does the job
-                    reject(new Error(receivedErrorText));
-                }
-            });
-        });
+    function changeWorkingDirectoryTo(absolutePath) {
+        process.chdir(path.relative(process.cwd(), absolutePath));
     }
 
     function checkResult(resultFolderPath, expectedFolderPath) {

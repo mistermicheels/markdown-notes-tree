@@ -3,6 +3,7 @@
 const path = require("path");
 const fs = require("fs");
 
+const logger = require("./logger");
 const pathUtils = require("./path-utils");
 const fileContents = require("./file-contents");
 
@@ -54,6 +55,6 @@ function writeTreeToDirectoryReadme(parentPathParts, name, treeForDirectory, end
     const relativeFilePath = path.join(...filePathParts);
     const absoluteFilePath = pathUtils.getAbsolutePath(relativeFilePath);
 
-    console.log(`Writing to ${absoluteFilePath}`);
+    logger.log(`Writing to ${absoluteFilePath}`);
     fs.writeFileSync(absoluteFilePath, contents);
 }
