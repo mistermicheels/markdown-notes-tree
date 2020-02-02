@@ -1,11 +1,11 @@
 "use strict";
 
-const minimatch = require("minimatch");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
 
 const optionsFunctions = require("./options");
+const ignoresFunctions = require("./ignores");
 
 // keep these globally instead of passing into virtually every function
 const endOfLine = os.EOL;
@@ -51,7 +51,7 @@ function getTreeNodesForDirectories(directories, relativeParentPath) {
     const treeNodes = [];
 
     for (const directory of directories) {
-        if (shouldIncludeDirectory(directory.name, relativeParentPath)) {
+        if (!ignoresFunctions.shouldIgnoreDirectory(directory.name, relativeParentPath, options)) {
             treeNodes.push({
                 isDirectory: true,
                 title: directory.name,
@@ -68,7 +68,7 @@ function getTreeNodesForFiles(files, relativeParentPath) {
     const treeNodes = [];
 
     for (const file of files) {
-        if (shouldIncludeFile(file.name, relativeParentPath)) {
+        if (!ignoresFunctions.shouldIgnoreFile(file.name, relativeParentPath, options)) {
             treeNodes.push({
                 isDirectory: false,
                 title: getTitleFromMarkdownFile(path.join(relativeParentPath, file.name)),
@@ -82,34 +82,6 @@ function getTreeNodesForFiles(files, relativeParentPath) {
     }
 
     return treeNodes;
-}
-
-function shouldIncludeDirectory(name, relativeParentPath) {
-    if (name.startsWith(".") || name.startsWith("_") || name === "node_modules") {
-        return false;
-    }
-
-    return shouldIncludeBasedOnIgnores(name, relativeParentPath);
-}
-
-function shouldIncludeFile(name, relativeParentPath) {
-    if (!name.endsWith(".md") || name === "README.md") {
-        return false;
-    }
-
-    return shouldIncludeBasedOnIgnores(name, relativeParentPath);
-}
-
-function shouldIncludeBasedOnIgnores(name, relativeParentPath) {
-    const relativePath = path.join(relativeParentPath, name);
-
-    for (const ignoredGlob of options.ignoredGlobs) {
-        if (minimatch(relativePath, ignoredGlob)) {
-            return false;
-        }
-    }
-
-    return true;
 }
 
 function getTitleFromMarkdownFile(relativePath) {
