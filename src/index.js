@@ -88,7 +88,7 @@ function getTreeNodesForFiles(files, relativeParentPath) {
 function getTitleFromMarkdownFile(relativePath) {
     const absolutePath = getAbsolutePath(relativePath);
     const fullContents = fs.readFileSync(absolutePath, { encoding: "utf-8" });
-    const firstLine = fullContents.split(endOfLine, 1)[0];
+    const firstLine = fullContents.split(/\r\n|\r|\n/, 1)[0];
 
     if (!firstLine.startsWith("# ")) {
         throw new Error(`No title found for Markdown file ${absolutePath}`);
