@@ -1,3 +1,5 @@
+"use strict";
+
 const minimist = require("minimist");
 
 module.exports = { getOptions };

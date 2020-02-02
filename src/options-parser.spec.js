@@ -1,3 +1,5 @@
+"use strict";
+
 const optionsParser = require("./options-parser");
 
 describe("optionsParser", () => {

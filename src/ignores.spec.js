@@ -1,3 +1,5 @@
+"use strict";
+
 const ignores = require("./ignores");
 
 describe("ignores", () => {

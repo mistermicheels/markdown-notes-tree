@@ -1,3 +1,5 @@
+"use strict";
+
 const dedent = require("dedent");
 
 const fileContents = require("./file-contents");
