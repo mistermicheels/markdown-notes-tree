@@ -11,12 +11,13 @@ module.exports = { execute };
 
 /** Note: this function is not intended to be run in parallel */
 function execute(commandLineArguments = []) {
-    const endOfLine = os.EOL;
     const options = optionsParser.getOptions(commandLineArguments);
     initializeLogger(options);
 
     logger.log("Processing files in order to build notes tree");
     const tree = treeBuilder.buildTree(options);
+
+    const endOfLine = os.EOL;
 
     logger.log("Writing notes tree to main README file");
     treeWriter.writeTreeToMainReadme(tree, endOfLine, options);

@@ -35,9 +35,7 @@ The tool ignores:
 
 You can specify additional files or folders to ignore using the `--ignore` command line argument (see below).
 
-## Options
-
-There are a limited number of command line arguments available:
+## Command line arguments
 
 -   `--ignore`: Specify glob pattern for additional files or folders to ignore. You can use this argument multiple times in order to specify multiple glob patterns.
     -   Example: `markdown-notes-tree --ignore **/CONTRIBUTING.md`
