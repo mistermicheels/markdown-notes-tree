@@ -5,7 +5,7 @@ If you have a folder structure with Markdown notes, you can use this tool to gen
 By default, the tool does the following:
 
 -   Append a complete tree to the main `README.md` file (in the directory where the tool is executed)
--   Overwrite any `README.md` files in subdirectories with a file containing the subdirectory's name as title and a tree of the subdirectory's contents (can be disabled through command line arguments)
+-   Write/overwrite `README.md` files in subdirectories, each containing the subdirectory's name as title and a tree of the subdirectory's contents (can be disabled through command line arguments)
 
 You can run the tool again and again without changing the result. Once a tree has been written to your main `README.md` file, you can add anything below the tree (or move the tree) and the tool will respect the tree's boundaries.
 
