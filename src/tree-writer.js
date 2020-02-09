@@ -20,7 +20,7 @@ function writeTreeToMainReadme(tree, endOfLine, options) {
         endOfLine
     );
 
-    fs.writeFileSync(mainReadmePath, newContents);
+    fs.writeFileSync(mainReadmePath, newContents, { encoding: "utf-8" });
 }
 
 function writeTreesForDirectories(mainTree, endOfLine, options) {
@@ -56,5 +56,5 @@ function writeTreeToDirectoryReadme(parentPathParts, name, treeForDirectory, end
     const absoluteFilePath = pathUtils.getAbsolutePath(relativeFilePath);
 
     logger.log(`Writing to ${absoluteFilePath}`);
-    fs.writeFileSync(absoluteFilePath, contents);
+    fs.writeFileSync(absoluteFilePath, contents, { encoding: "utf-8" });
 }

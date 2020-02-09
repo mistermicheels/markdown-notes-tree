@@ -4,6 +4,7 @@ const path = require("path");
 const fs = require("fs");
 
 const pathUtils = require("./path-utils");
+const stringUtils = require("./string-utils");
 const ignores = require("./ignores");
 const fileContents = require("./file-contents");
 
@@ -16,6 +17,8 @@ function buildTree(options) {
 function buildTreeStartingAt(relativePath, options) {
     const absolutePath = pathUtils.getAbsolutePath(relativePath);
     const entries = fs.readdirSync(absolutePath, { withFileTypes: true });
+
+    entries.sort((a, b) => stringUtils.compareIgnoringCaseAndDiacritics(a.name, b.name));
     const directories = entries.filter(entry => entry.isDirectory());
     const files = entries.filter(entry => !entry.isDirectory());
 
@@ -58,7 +61,7 @@ function getTreeNodesForFiles(files, relativeParentPath, options) {
     }
 
     if (options.orderNotesByTitle) {
-        treeNodes.sort((a, b) => a.title.localeCompare(b.title, "en", { sensitivity: "base" }));
+        treeNodes.sort((a, b) => stringUtils.compareIgnoringCaseAndDiacritics(a.title, b.title));
     }
 
     return treeNodes;
