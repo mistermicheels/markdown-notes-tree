@@ -1,6 +1,6 @@
 {
     "name": "markdown-notes-tree",
-    "version": "1.5.0",
+    "version": "1.5.1",
     "description": "Generate Markdown trees that act as a table of contents for a folder structure with Markdown notes",
     "main": "src/index.js",
     "bin": {
