@@ -7,7 +7,7 @@ This is some báàsic content.
 
 - [**sub1**](sub1)
     - [Top](sub1/_top.md)
-    - [A](sub1/á.md)
+    - [Aà](sub1/á.md)
     - [B](sub1/B.md)
 
 <!-- auto-generated notes tree ends here -->

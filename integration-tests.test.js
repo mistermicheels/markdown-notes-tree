@@ -24,7 +24,7 @@ describe("markdown-notes-tree", () => {
     });
 
     test("it should properly order files by file name by default, including support for special characters", () => {
-        executeTestScenario("file-order", []);
+        executeTestScenario("file-order-special-characters", []);
     });
 
     test("it should allow adding custom file ignores using a single glob expression", () => {
