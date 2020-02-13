@@ -4,4 +4,5 @@
 const markdownNotesTree = require("./src/index");
 
 const commandLineArguments = process.argv.slice(2);
-markdownNotesTree.execute(commandLineArguments);
+const logger = message => console.log(message);
+markdownNotesTree.execute(commandLineArguments, logger);

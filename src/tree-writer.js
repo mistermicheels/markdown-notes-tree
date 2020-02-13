@@ -3,7 +3,6 @@
 const path = require("path");
 const fs = require("fs");
 
-const logger = require("./logger");
 const pathUtils = require("./path-utils");
 const fileContents = require("./file-contents");
 
@@ -23,38 +22,46 @@ function writeTreeToMainReadme(tree, endOfLine, options) {
     fs.writeFileSync(mainReadmePath, newContents, { encoding: "utf-8" });
 }
 
-function writeTreesForDirectories(mainTree, endOfLine, options) {
+function writeTreesForDirectories(mainTree, endOfLine, options, logger) {
     for (const treeNode of mainTree) {
         if (treeNode.isDirectory) {
-            writeTreesForDirectory([], treeNode.filename, treeNode.children, endOfLine, options);
-        }
-    }
-}
-
-function writeTreesForDirectory(parentPathParts, name, treeForDirectory, endOfLine, options) {
-    writeTreeToDirectoryReadme(parentPathParts, name, treeForDirectory, endOfLine, options);
-
-    for (const treeNode of treeForDirectory) {
-        if (treeNode.isDirectory) {
             writeTreesForDirectory(
-                [...parentPathParts, name],
+                [treeNode.filename],
                 treeNode.filename,
                 treeNode.children,
                 endOfLine,
-                options
+                options,
+                logger
             );
         }
     }
 }
 
-function writeTreeToDirectoryReadme(parentPathParts, name, treeForDirectory, endOfLine, options) {
+function writeTreesForDirectory(pathParts, name, treeForDirectory, endOfLine, options, logger) {
+    writeTreeToDirectoryReadme(pathParts, name, treeForDirectory, endOfLine, options, logger);
+
+    for (const treeNode of treeForDirectory) {
+        if (treeNode.isDirectory) {
+            writeTreesForDirectory(
+                [...pathParts, treeNode.filename],
+                treeNode.filename,
+                treeNode.children,
+                endOfLine,
+                options,
+                logger
+            );
+        }
+    }
+}
+
+function writeTreeToDirectoryReadme(pathParts, name, treeForDirectory, endOfLine, options, logger) {
     const markdownForTree = fileContents.getMarkdownForTree(treeForDirectory, endOfLine, options);
     const contents = fileContents.getDirectoryReadmeContents(name, markdownForTree, endOfLine);
 
-    const filePathParts = [...parentPathParts, name, "README.md"];
+    const filePathParts = [...pathParts, "README.md"];
     const relativeFilePath = path.join(...filePathParts);
     const absoluteFilePath = pathUtils.getAbsolutePath(relativeFilePath);
 
-    logger.log(`Writing to ${absoluteFilePath}`);
+    logger(`Writing to ${absoluteFilePath}`);
     fs.writeFileSync(absoluteFilePath, contents, { encoding: "utf-8" });
 }

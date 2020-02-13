@@ -6,7 +6,21 @@ const markdownNotesTree = require("./src/index");
 
 describe("markdown-notes-tree", () => {
     test("it should have correct basic functionality", () => {
-        executeTestScenario("basics", []);
+        const resultFolderPath = getTestFolderPath("basics", "result");
+
+        const expectedLogs = [
+            "Processing files in order to build notes tree",
+            "Writing notes tree to main README file",
+            "Writing trees for directories",
+            `Writing to ${resultFolderPath}\\sub1\\README.md`,
+            `Writing to ${resultFolderPath}\\sub1\\sub1a\\README.md`,
+            `Writing to ${resultFolderPath}\\sub2\\README.md`,
+            `Writing to ${resultFolderPath}\\sub2\\sub2a\\README.md`,
+            `Writing to ${resultFolderPath}\\sub2\\sub2b\\README.md`,
+            "Finished execution"
+        ];
+
+        executeTestScenario("basics", [], expectedLogs);
     });
 
     test("it should preserve content after the tree in the main README", () => {
@@ -49,7 +63,19 @@ describe("markdown-notes-tree", () => {
     });
 
     test("it should allow not writing subdirectory trees", () => {
-        executeTestScenario("no-subdirectory-trees", ["--noSubdirectoryTrees"]);
+        const expectedLogs = [
+            "Processing files in order to build notes tree",
+            "Writing notes tree to main README file",
+            "Finished execution"
+        ];
+
+        executeTestScenario("no-subdirectory-trees", ["--noSubdirectoryTrees"], expectedLogs);
+    });
+
+    test("it should allow disabling logging", () => {
+        const expectedLogs = [];
+
+        executeTestScenario("basics", ["--silent"], expectedLogs);
     });
 
     test("it should allow ordering notes by title", () => {
@@ -60,11 +86,10 @@ describe("markdown-notes-tree", () => {
         executeTestScenario("use-tabs", ["--useTabs"]);
     });
 
-    function executeTestScenario(folderName, args) {
-        const folderPath = path.join(__dirname, "test-data", folderName);
-        const inputFolderPath = path.join(folderPath, "input");
-        const expectedFolderPath = path.join(folderPath, "expected");
-        const resultFolderPath = path.join(folderPath, "result");
+    function executeTestScenario(folderName, args, expectedLogs = undefined) {
+        const inputFolderPath = getTestFolderPath(folderName, "input");
+        const expectedFolderPath = getTestFolderPath(folderName, "expected");
+        const resultFolderPath = getTestFolderPath(folderName, "result");
 
         fsExtra.copySync(inputFolderPath, resultFolderPath, {
             overwrite: false,
@@ -75,20 +100,34 @@ describe("markdown-notes-tree", () => {
         changeWorkingDirectoryTo(resultFolderPath);
 
         try {
-            markdownNotesTree.execute([...args, "--silent"]);
-            checkResult(resultFolderPath, expectedFolderPath);
+            executeAndCheck(args, resultFolderPath, expectedFolderPath, expectedLogs);
 
             // check that second run doesn't change anything
-            markdownNotesTree.execute([...args, "--silent"]);
-            checkResult(resultFolderPath, expectedFolderPath);
+            executeAndCheck(args, resultFolderPath, expectedFolderPath, expectedLogs);
         } finally {
             changeWorkingDirectoryTo(originalWorkingDirectory);
             fsExtra.removeSync(resultFolderPath);
         }
     }
 
+    function getTestFolderPath(folderName, subfolderName) {
+        return path.join(__dirname, "test-data", folderName, subfolderName);
+    }
+
     function changeWorkingDirectoryTo(absolutePath) {
         process.chdir(path.relative(process.cwd(), absolutePath));
+    }
+
+    function executeAndCheck(args, resultFolderPath, expectedFolderPath, expectedLogs) {
+        const capturedLogs = [];
+        const logger = message => capturedLogs.push(message);
+
+        markdownNotesTree.execute(args, logger);
+        checkResult(resultFolderPath, expectedFolderPath);
+
+        if (expectedLogs) {
+            expect(capturedLogs).toEqual(expectedLogs);
+        }
     }
 
     function checkResult(resultFolderPath, expectedFolderPath) {
