@@ -12,11 +12,11 @@ describe("markdown-notes-tree", () => {
             "Processing files in order to build notes tree",
             "Writing notes tree to main README file",
             "Writing trees for directories",
-            `Writing to ${resultFolderPath}\\sub1\\README.md`,
-            `Writing to ${resultFolderPath}\\sub1\\sub1a\\README.md`,
-            `Writing to ${resultFolderPath}\\sub2\\README.md`,
-            `Writing to ${resultFolderPath}\\sub2\\sub2a\\README.md`,
-            `Writing to ${resultFolderPath}\\sub2\\sub2b\\README.md`,
+            `Writing to ${path.join(resultFolderPath, "sub1", "README.md")}`,
+            `Writing to ${path.join(resultFolderPath, "sub1", "sub1a", "README.md")}`,
+            `Writing to ${path.join(resultFolderPath, "sub2", "README.md")}`,
+            `Writing to ${path.join(resultFolderPath, "sub2", "sub2a", "README.md")}`,
+            `Writing to ${path.join(resultFolderPath, "sub2", "sub2b", "README.md")}`,
             "Finished execution"
         ];
 
