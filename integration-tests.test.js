@@ -32,8 +32,10 @@ describe("markdown-notes-tree", () => {
     });
 
     test("it should throw an error if a Markdown file does not start with the title", () => {
+        const resultFolderPath = getTestFolderPath("error-no-title", "result");
+
         expect(() => executeTestScenario("error-no-title", [])).toThrow(
-            /No title found for Markdown file [\S]+\.md/
+            `No title found for Markdown file ${path.join(resultFolderPath, "sub1", "file1a.md")}`
         );
     });
 
