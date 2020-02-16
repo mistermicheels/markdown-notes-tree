@@ -47,12 +47,6 @@ describe("markdown-notes-tree", () => {
         executeTestScenario("ignore-files", ["--ignore", "**/CONTRIBUTING.md"]);
     });
 
-    test("it should allow including all directories by default", () => {
-        executeTestScenario("include-all-directories-by-default", [
-            "--includeAllDirectoriesByDefault"
-        ]);
-    });
-
     test("it should allow adding custom file ignores using multiple glob expressions", () => {
         executeTestScenario("ignore-files", [
             "--ignore",
@@ -64,6 +58,12 @@ describe("markdown-notes-tree", () => {
 
     test("it should allow using a custom ignore to ignore an entire folder", () => {
         executeTestScenario("ignore-folder", ["--ignore", "exclude-this-folder"]);
+    });
+
+    test("it should allow including all directories by default", () => {
+        executeTestScenario("include-all-directories-by-default", [
+            "--includeAllDirectoriesByDefault"
+        ]);
     });
 
     test("it should allow linking directly to subdirectory README files", () => {
