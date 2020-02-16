@@ -17,27 +17,26 @@ function getTitleFromMarkdownContents(contents) {
     }
 }
 
-function getMarkdownForTree(tree, endOfLine, { linkToSubdirectoryReadme, useTabs }) {
-    const lines = getMarkdownLinesForTree(tree, [], { linkToSubdirectoryReadme, useTabs });
+function getMarkdownForTree(tree, endOfLine, options) {
+    const lines = getMarkdownLinesForTree(tree, [], options);
     return lines.join(endOfLine);
 }
 
-function getMarkdownLinesForTree(tree, parentPathParts, { linkToSubdirectoryReadme, useTabs }) {
+function getMarkdownLinesForTree(tree, parentPathParts, options) {
     const markdownLines = [];
-    const indentationUnit = getIndentationUnit({ useTabs });
+    const indentationUnit = getIndentationUnit(options);
 
     for (const treeNode of tree) {
-        markdownLines.push(
-            getMarkdownLineForTreeNode(treeNode, parentPathParts, { linkToSubdirectoryReadme })
-        );
+        markdownLines.push(getMarkdownLineForTreeNode(treeNode, parentPathParts, options));
 
         if (treeNode.isDirectory) {
             const fullPathParts = [...parentPathParts, treeNode.filename];
 
-            const linesForChildren = getMarkdownLinesForTree(treeNode.children, fullPathParts, {
-                linkToSubdirectoryReadme,
-                useTabs
-            });
+            const linesForChildren = getMarkdownLinesForTree(
+                treeNode.children,
+                fullPathParts,
+                options
+            );
 
             const indentedLines = linesForChildren.map(line => indentationUnit + line);
             markdownLines.push(...indentedLines);
@@ -47,18 +46,18 @@ function getMarkdownLinesForTree(tree, parentPathParts, { linkToSubdirectoryRead
     return markdownLines;
 }
 
-function getIndentationUnit({ useTabs }) {
+function getIndentationUnit(options) {
     // Markdown standard: either four spaces or tabs
-    if (useTabs) {
+    if (options.useTabs) {
         return "\t";
     } else {
         return " ".repeat(4);
     }
 }
 
-function getMarkdownLineForTreeNode(treeNode, parentPath, { linkToSubdirectoryReadme }) {
+function getMarkdownLineForTreeNode(treeNode, parentPath, options) {
     const linkText = getLinkTextForTreeNode(treeNode);
-    const linkTarget = getLinkTargetForTreeNode(treeNode, parentPath, { linkToSubdirectoryReadme });
+    const linkTarget = getLinkTargetForTreeNode(treeNode, parentPath, options);
     return `- [${linkText}](${linkTarget})`;
 }
 
@@ -70,11 +69,11 @@ function getLinkTextForTreeNode(treeNode) {
     }
 }
 
-function getLinkTargetForTreeNode(treeNode, parentPathParts, { linkToSubdirectoryReadme }) {
+function getLinkTargetForTreeNode(treeNode, parentPathParts, options) {
     const fullPathParts = [...parentPathParts, treeNode.filename];
     let linkTarget = fullPathParts.join("/");
 
-    if (treeNode.isDirectory && linkToSubdirectoryReadme) {
+    if (treeNode.isDirectory && options.linkToSubdirectoryReadme) {
         linkTarget = linkTarget + "/README.md";
     }
 

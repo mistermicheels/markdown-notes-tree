@@ -7,6 +7,7 @@ describe("optionsParser", () => {
         test("it should return the default options if no arguments are specified", () => {
             const defaultOptions = {
                 ignoredGlobs: [],
+                includeAllDirectoriesByDefault: false,
                 linkToSubdirectoryReadme: false,
                 noSubdirectoryTrees: false,
                 orderNotesByTitle: false,

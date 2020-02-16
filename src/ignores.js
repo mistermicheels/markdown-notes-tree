@@ -5,20 +5,28 @@ const path = require("path");
 
 module.exports = { shouldIgnoreDirectory, shouldIgnoreFile };
 
-function shouldIgnoreDirectory(name, relativeParentPath, { ignoredGlobs }) {
-    if (name.startsWith(".") || name.startsWith("_") || name === "node_modules") {
+function shouldIgnoreDirectory(name, relativeParentPath, options) {
+    if (shouldIgnoreDirectoryBasedOnName(name, options)) {
         return true;
     }
 
-    return shouldIgnoreBasedOnGlobs(name, relativeParentPath, ignoredGlobs);
+    return shouldIgnoreBasedOnGlobs(name, relativeParentPath, options.ignoredGlobs);
 }
 
-function shouldIgnoreFile(name, relativeParentPath, { ignoredGlobs }) {
+function shouldIgnoreDirectoryBasedOnName(name, options) {
+    if (options.includeAllDirectoriesByDefault) {
+        return false;
+    } else {
+        return name.startsWith(".") || name.startsWith("_") || name === "node_modules";
+    }
+}
+
+function shouldIgnoreFile(name, relativeParentPath, options) {
     if (!name.endsWith(".md") || name === "README.md") {
         return true;
     }
 
-    return shouldIgnoreBasedOnGlobs(name, relativeParentPath, ignoredGlobs);
+    return shouldIgnoreBasedOnGlobs(name, relativeParentPath, options.ignoredGlobs);
 }
 
 function shouldIgnoreBasedOnGlobs(name, relativeParentPath, ignoredGlobs) {

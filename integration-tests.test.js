@@ -47,6 +47,12 @@ describe("markdown-notes-tree", () => {
         executeTestScenario("ignore-files", ["--ignore", "**/CONTRIBUTING.md"]);
     });
 
+    test("it should allow including all directories by default", () => {
+        executeTestScenario("include-all-directories-by-default", [
+            "--includeAllDirectoriesByDefault"
+        ]);
+    });
+
     test("it should allow adding custom file ignores using multiple glob expressions", () => {
         executeTestScenario("ignore-files", [
             "--ignore",

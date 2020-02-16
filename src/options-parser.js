@@ -9,6 +9,7 @@ function getOptions(commandLineArguments) {
 
     return {
         ignoredGlobs: makeArray(parsedArguments.ignore),
+        includeAllDirectoriesByDefault: parsedArguments.includeAllDirectoriesByDefault || false,
         linkToSubdirectoryReadme: parsedArguments.linkToSubdirectoryReadme || false,
         noSubdirectoryTrees: parsedArguments.noSubdirectoryTrees || false,
         orderNotesByTitle: parsedArguments.orderNotesByTitle || false,
