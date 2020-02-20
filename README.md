@@ -41,7 +41,7 @@ You can customize this using the `--ignore` and `--includeAllDirectoriesByDefaul
     -   Example: `markdown-notes-tree --ignore **/CONTRIBUTING.md`
     -   Example: `markdown-notes-tree --ignore CONTRIBUTING.md --ignore sub1/CONTRIBUTING.md`
     -   Example: `markdown-notes-tree --ignore exclude-this-folder`
--   `--includeAllDirectoriesByDefault`: Include all directories by default (don't apply the default ignored folders listed above). It is recommended to combine this with an ignore for `node_modules`, unless you have good reasons to include that one.
+-   `--includeAllDirectoriesByDefault`: Include all directories by default (don't apply the default ignored folders listed above). You can combine this with custom ignores as needed.
     -   Example: `markdown-notes-tree --includeAllDirectoriesByDefault --ignore node_modules`
 -   `--linkToSubdirectoryReadme`: When linking to a subdirectory, link directly to its `README.md` file. Note that this assumes that each subdirectory will actually have a `README.md` file. By default, the tool generates these automatically.
     -   Example: `markdown-notes-tree --linkToSubdirectoryReadme`
