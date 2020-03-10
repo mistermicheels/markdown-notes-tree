@@ -47,6 +47,8 @@ You can customize this using the `--ignore` and `--includeAllDirectoriesByDefaul
     -   Example: `markdown-notes-tree --linkToSubdirectoryReadme`
 -   `--noSubdirectoryTrees`: Don't write `README.md` files to subdirectories. Any existing `README.md` files in subdirectories will be ignored.
     -   Example: `markdown-notes-tree --noSubdirectoryTrees`
+-   `--notesBeforeDirectories`: If a directory contains both notes and subdirectories, put the notes before the subdirectories in he tree. By default, it's the other way around.
+    -   Example: `markdown-notes-tree --notesBeforeDirectories`
 -   `--orderNotesByTitle`: Order notes in the same (sub)directory by title instead of by filename.
     -   Example: `markdown-notes-tree --orderNotesByTitle`
 -   `--silent`: Don't log to the console during execution.

@@ -80,14 +80,18 @@ describe("markdown-notes-tree", () => {
         executeTestScenario("no-subdirectory-trees", ["--noSubdirectoryTrees"], expectedLogs);
     });
 
-    test("it should allow disabling logging", () => {
-        const expectedLogs = [];
-
-        executeTestScenario("basics", ["--silent"], expectedLogs);
+    test("it should allow putting notes before directories", () => {
+        executeTestScenario("notes-before-directories", ["--notesBeforeDirectories"]);
     });
 
     test("it should allow ordering notes by title", () => {
         executeTestScenario("order-notes-by-title", ["--orderNotesByTitle"]);
+    });
+
+    test("it should allow disabling logging", () => {
+        const expectedLogs = [];
+
+        executeTestScenario("basics", ["--silent"], expectedLogs);
     });
 
     test("it should allow using tabs for indentation", () => {

@@ -12,6 +12,7 @@ function getOptions(commandLineArguments) {
         includeAllDirectoriesByDefault: parsedArguments.includeAllDirectoriesByDefault || false,
         linkToSubdirectoryReadme: parsedArguments.linkToSubdirectoryReadme || false,
         noSubdirectoryTrees: parsedArguments.noSubdirectoryTrees || false,
+        notesBeforeDirectories: parsedArguments.notesBeforeDirectories || false,
         orderNotesByTitle: parsedArguments.orderNotesByTitle || false,
         silent: parsedArguments.silent || false,
         useTabs: parsedArguments.useTabs || false

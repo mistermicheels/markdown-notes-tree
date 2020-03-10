@@ -25,7 +25,11 @@ function buildTreeStartingAt(relativePath, options) {
     const treeNodesForDirectories = getTreeNodesForDirectories(directories, relativePath, options);
     const treeNodesForFiles = getTreeNodesForFiles(files, relativePath, options);
 
-    return [...treeNodesForDirectories, ...treeNodesForFiles];
+    if (options.notesBeforeDirectories) {
+        return [...treeNodesForFiles, ...treeNodesForDirectories];
+    } else {
+        return [...treeNodesForDirectories, ...treeNodesForFiles];
+    }
 }
 
 function getTreeNodesForDirectories(directories, relativeParentPath, options) {

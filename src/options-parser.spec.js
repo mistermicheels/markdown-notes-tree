@@ -10,6 +10,7 @@ describe("optionsParser", () => {
                 includeAllDirectoriesByDefault: false,
                 linkToSubdirectoryReadme: false,
                 noSubdirectoryTrees: false,
+                notesBeforeDirectories: false,
                 orderNotesByTitle: false,
                 silent: false,
                 useTabs: false
