@@ -55,3 +55,11 @@ You can customize this using the `--ignore` and `--includeAllDirectoriesByDefaul
     -   Example: `markdown-notes-tree --silent`
 -   `--useTabs`: Use tabs (instead of the standard four spaces) for indentation.
     -   Example: `markdown-notes-tree --useTabs`
+
+## Development
+
+This project is using Prettier to format the JavaScript code. Installing the VS Code plugin recommended through the `extensions.json` file should make this easy.
+
+The build script verifies that the formatting actually matches Prettier style and that the unit and integration tests are passing.
+
+During development, you can run the tool on a folder by navigating to the folder in the command line and then executing `node path/to/cli.js`, adding arguments as needed. Example: `node ../../../cli.js --silent`
