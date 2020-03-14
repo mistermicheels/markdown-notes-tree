@@ -1,6 +1,7 @@
 # markdown-notes-tree
 
 [![Codecov Coverage](https://img.shields.io/codecov/c/github/mistermicheels/markdown-notes-tree?style=flat)](https://codecov.io/gh/mistermicheels/markdown-notes-tree/)
+[![npm](https://img.shields.io/npm/v/markdown-notes-tree?style=flat)](https://www.npmjs.com/package/markdown-notes-tree)
 
 If you have a folder structure with Markdown notes, you can use this tool to generate Markdown trees that act as a table of contents for the folder structure.
 
