@@ -13,6 +13,7 @@ describe("optionsParser", () => {
                 notesBeforeDirectories: false,
                 orderNotesByTitle: false,
                 silent: false,
+                subdirectoryDescriptionOnNewLine: false,
                 useTabs: false
             };
 

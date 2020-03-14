@@ -55,13 +55,25 @@ function writeTreesForDirectory(pathParts, name, treeForDirectory, endOfLine, op
 }
 
 function writeTreeToDirectoryReadme(pathParts, name, treeForDirectory, endOfLine, options, logger) {
-    const markdownForTree = fileContents.getMarkdownForTree(treeForDirectory, endOfLine, options);
-    const contents = fileContents.getDirectoryReadmeContents(name, markdownForTree, endOfLine);
-
     const filePathParts = [...pathParts, "README.md"];
     const relativeFilePath = path.join(...filePathParts);
     const absoluteFilePath = pathUtils.getAbsolutePath(relativeFilePath);
 
+    let currentContents = "";
+
+    if (fs.existsSync(absoluteFilePath)) {
+        currentContents = fs.readFileSync(absoluteFilePath, { encoding: "utf-8" });
+    }
+
+    const markdownForTree = fileContents.getMarkdownForTree(treeForDirectory, endOfLine, options);
+
+    const newContents = fileContents.getNewDirectoryReadmeContents(
+        name,
+        currentContents,
+        markdownForTree,
+        endOfLine
+    );
+
     logger(`Writing to ${absoluteFilePath}`);
-    fs.writeFileSync(absoluteFilePath, contents, { encoding: "utf-8" });
+    fs.writeFileSync(absoluteFilePath, newContents, { encoding: "utf-8" });
 }

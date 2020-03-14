@@ -1,0 +1,11 @@
+<!-- this entire file is auto-generated -->
+
+# sub1a
+
+<!-- optional markdown-notes-tree directory description starts here -->
+
+Description for sub1a
+
+<!-- optional markdown-notes-tree directory description ends here -->
+
+- [Title for file1a1](file1a1.md)

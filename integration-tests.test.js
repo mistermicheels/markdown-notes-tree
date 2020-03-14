@@ -94,6 +94,16 @@ describe("markdown-notes-tree", () => {
         executeTestScenario("basics", ["--silent"], expectedLogs);
     });
 
+    test("it should include subdirectory descriptions if provided", () => {
+        executeTestScenario("subdirectory-description", []);
+    });
+
+    test("it should allow putting subdirectory descriptions on a new line", () => {
+        executeTestScenario("subdirectory-description-on-new-line", [
+            "--subdirectoryDescriptionOnNewLine"
+        ]);
+    });
+
     test("it should allow using tabs for indentation", () => {
         executeTestScenario("use-tabs", ["--useTabs"]);
     });

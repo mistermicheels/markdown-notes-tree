@@ -35,6 +35,10 @@ By default, the tool ignores:
 
 You can customize this using the `--ignore` and `--includeAllDirectoriesByDefault` command line arguments (see below).
 
+## Subdirectory descriptions
+
+The generated `README.md` files for subdirectories provide some space to add a description for the directory. If a description is provided, it will be preserved and it will also be included in generated trees containing the directory.
+
 ## Command line arguments
 
 -   `--ignore`: Specify glob pattern for additional files or folders to ignore. You can use this argument multiple times in order to specify multiple glob patterns.
@@ -53,6 +57,8 @@ You can customize this using the `--ignore` and `--includeAllDirectoriesByDefaul
     -   Example: `markdown-notes-tree --orderNotesByTitle`
 -   `--silent`: Don't log to the console during execution.
     -   Example: `markdown-notes-tree --silent`
+-   `--subdirectoryDescriptionOnNewLine`: If subdirectory descriptions are provided, put them on a new line in the tree.
+    -   Example: `markdown-notes-tree --subdirectoryDescriptionOnNewLine`
 -   `--useTabs`: Use tabs (instead of the standard four spaces) for indentation.
     -   Example: `markdown-notes-tree --useTabs`
 

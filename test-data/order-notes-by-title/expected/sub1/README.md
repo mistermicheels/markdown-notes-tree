@@ -2,6 +2,10 @@
 
 # sub1
 
+<!-- optional markdown-notes-tree directory description starts here -->
+
+<!-- optional markdown-notes-tree directory description ends here -->
+
 - [**sub1a**](sub1a)
     - [A Title for file1a2](sub1a/file1a2.md)
     - [B Title for file1a1](sub1a/file1a1.md)

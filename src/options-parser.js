@@ -15,6 +15,7 @@ function getOptions(commandLineArguments) {
         notesBeforeDirectories: parsedArguments.notesBeforeDirectories || false,
         orderNotesByTitle: parsedArguments.orderNotesByTitle || false,
         silent: parsedArguments.silent || false,
+        subdirectoryDescriptionOnNewLine: parsedArguments.subdirectoryDescriptionOnNewLine || false,
         useTabs: parsedArguments.useTabs || false
     };
 }

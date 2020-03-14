@@ -4,7 +4,18 @@ module.exports = {
     getTitleFromMarkdownContents,
     getMarkdownForTree,
     getNewMainReadmeContents,
-    getDirectoryReadmeContents
+    getNewDirectoryReadmeContents,
+    getDirectoryDescriptionFromCurrentContents
+};
+
+const markers = {
+    mainReadmeTreeStart: "<!-- auto-generated notes tree starts here -->",
+    mainReadmeTreeEnd: "<!-- auto-generated notes tree ends here -->",
+    directoryReadmeGeneratedStart: "<!-- this entire file is auto-generated -->",
+    directoryReadmeDescriptionStart:
+        "<!-- optional markdown-notes-tree directory description starts here -->",
+    directoryReadmeDescriptionEnd:
+        "<!-- optional markdown-notes-tree directory description ends here -->"
 };
 
 function getTitleFromMarkdownContents(contents) {
@@ -18,16 +29,23 @@ function getTitleFromMarkdownContents(contents) {
 }
 
 function getMarkdownForTree(tree, endOfLine, options) {
-    const lines = getMarkdownLinesForTree(tree, [], options);
+    const lines = getMarkdownLinesForTree(tree, [], endOfLine, options);
     return lines.join(endOfLine);
 }
 
-function getMarkdownLinesForTree(tree, parentPathParts, options) {
+function getMarkdownLinesForTree(tree, parentPathParts, endOfLine, options) {
     const markdownLines = [];
     const indentationUnit = getIndentationUnit(options);
 
     for (const treeNode of tree) {
-        markdownLines.push(getMarkdownLineForTreeNode(treeNode, parentPathParts, options));
+        const markdownForTreeNode = getMarkdownForTreeNode(
+            treeNode,
+            parentPathParts,
+            endOfLine,
+            options
+        );
+
+        markdownLines.push(...markdownForTreeNode.split(endOfLine));
 
         if (treeNode.isDirectory) {
             const fullPathParts = [...parentPathParts, treeNode.filename];
@@ -35,6 +53,7 @@ function getMarkdownLinesForTree(tree, parentPathParts, options) {
             const linesForChildren = getMarkdownLinesForTree(
                 treeNode.children,
                 fullPathParts,
+                endOfLine,
                 options
             );
 
@@ -55,10 +74,18 @@ function getIndentationUnit(options) {
     }
 }
 
-function getMarkdownLineForTreeNode(treeNode, parentPath, options) {
+function getMarkdownForTreeNode(treeNode, parentPath, endOfLine, options) {
     const linkText = getLinkTextForTreeNode(treeNode);
     const linkTarget = getLinkTargetForTreeNode(treeNode, parentPath, options);
-    return `- [${linkText}](${linkTarget})`;
+
+    const basicLine = `- [${linkText}](${linkTarget})`;
+
+    if (treeNode.description) {
+        const descriptionSeparator = getDescriptionSeparator(endOfLine, options);
+        return basicLine + descriptionSeparator + treeNode.description;
+    } else {
+        return basicLine;
+    }
 }
 
 function getLinkTextForTreeNode(treeNode) {
@@ -80,51 +107,98 @@ function getLinkTargetForTreeNode(treeNode, parentPathParts, options) {
     return linkTarget;
 }
 
-function getNewMainReadmeContents(currentContents, markdownForTree, endOfLine) {
-    const treeStartMarker = "<!-- auto-generated notes tree starts here -->";
-    const treeEndMarker = "<!-- auto-generated notes tree ends here -->";
-
-    const indexStartMarker = currentContents.indexOf(treeStartMarker);
-    let contentsBeforeStartMarker;
-
-    if (indexStartMarker >= 0) {
-        contentsBeforeStartMarker = currentContents.substring(0, indexStartMarker);
+function getDescriptionSeparator(endOfLine, options) {
+    if (options.subdirectoryDescriptionOnNewLine) {
+        return "  " + endOfLine + getIndentationUnit(options);
     } else {
-        contentsBeforeStartMarker = currentContents + endOfLine.repeat(2);
+        return " - ";
+    }
+}
+
+function getNewMainReadmeContents(currentContents, markdownForTree, endOfLine) {
+    const indexTreeStartMarker = currentContents.indexOf(markers.mainReadmeTreeStart);
+    let contentsBeforeTree;
+
+    if (indexTreeStartMarker >= 0) {
+        contentsBeforeTree = currentContents.substring(0, indexTreeStartMarker);
+    } else {
+        contentsBeforeTree = currentContents + endOfLine.repeat(2);
     }
 
-    const indexEndMarker = currentContents.indexOf(treeEndMarker);
-    let contentsAfterEndMarker;
+    const indexTreeEndMarker = currentContents.indexOf(markers.mainReadmeTreeEnd);
+    let contentsAfterTree;
 
-    if (indexEndMarker >= 0 && indexEndMarker < indexStartMarker) {
+    if (indexTreeEndMarker >= 0 && indexTreeEndMarker < indexTreeStartMarker) {
         throw new Error("Invalid file structure: tree end marker found before tree start marker");
-    } else if (indexEndMarker >= 0) {
-        contentsAfterEndMarker = currentContents.substring(indexEndMarker + treeEndMarker.length);
+    } else if (indexTreeEndMarker >= 0) {
+        contentsAfterTree = currentContents.substring(
+            indexTreeEndMarker + markers.mainReadmeTreeEnd.length
+        );
     } else {
-        contentsAfterEndMarker = endOfLine;
+        contentsAfterTree = endOfLine;
     }
 
     return (
-        contentsBeforeStartMarker +
-        treeStartMarker +
+        contentsBeforeTree +
+        markers.mainReadmeTreeStart +
         endOfLine.repeat(2) +
         markdownForTree +
         endOfLine.repeat(2) +
-        treeEndMarker +
-        contentsAfterEndMarker
+        markers.mainReadmeTreeEnd +
+        contentsAfterTree
     );
 }
 
-function getDirectoryReadmeContents(name, markdownForTree, endOfLine) {
-    const autoGenerationComment = "<!-- this entire file is auto-generated -->";
+function getNewDirectoryReadmeContents(name, currentContents, markdownForTree, endOfLine) {
     const title = `# ${name}`;
+    const description = getDirectoryDescriptionFromCurrentContents(currentContents);
+
+    let partBetweenDescriptionMarkers = endOfLine.repeat(2);
+
+    if (description) {
+        partBetweenDescriptionMarkers = endOfLine.repeat(2) + description + endOfLine.repeat(2);
+    }
 
     return (
-        autoGenerationComment +
+        markers.directoryReadmeGeneratedStart +
         endOfLine.repeat(2) +
         title +
+        endOfLine.repeat(2) +
+        markers.directoryReadmeDescriptionStart +
+        partBetweenDescriptionMarkers +
+        markers.directoryReadmeDescriptionEnd +
         endOfLine.repeat(2) +
         markdownForTree +
         endOfLine
     );
+}
+
+function getDirectoryDescriptionFromCurrentContents(currentContents) {
+    const indexDescriptionStartMarker = currentContents.indexOf(
+        markers.directoryReadmeDescriptionStart
+    );
+
+    const indexDescriptionEndMarker = currentContents.indexOf(
+        markers.directoryReadmeDescriptionEnd
+    );
+
+    const validMarkers =
+        indexDescriptionStartMarker >= 0 &&
+        indexDescriptionEndMarker >= 0 &&
+        indexDescriptionEndMarker > indexDescriptionStartMarker;
+
+    if (validMarkers) {
+        const descriptionStart =
+            indexDescriptionStartMarker + markers.directoryReadmeDescriptionStart.length;
+
+        const descriptionEnd = indexDescriptionEndMarker;
+
+        return currentContents.substring(descriptionStart, descriptionEnd).trim();
+    } else if (indexDescriptionStartMarker >= 0 || indexDescriptionEndMarker >= 0) {
+        throw new Error(
+            "Invalid file structure: only one description marker found or end marker found before start marker"
+        );
+    } else {
+        return "";
+    }
 }

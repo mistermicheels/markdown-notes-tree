@@ -42,6 +42,7 @@ function getTreeNodesForDirectories(directories, relativeParentPath, options) {
             treeNodes.push({
                 isDirectory: true,
                 title: directory.name,
+                description: getDescriptionFromDirectoryReadme(relativePath),
                 filename: directory.name,
                 children: buildTreeStartingAt(relativePath, options)
             });
@@ -56,9 +57,11 @@ function getTreeNodesForFiles(files, relativeParentPath, options) {
 
     for (const file of files) {
         if (!ignores.shouldIgnoreFile(file.name, relativeParentPath, options)) {
+            const relativePath = path.join(relativeParentPath, file.name);
+
             treeNodes.push({
                 isDirectory: false,
-                title: getTitleFromMarkdownFileOrThrow(path.join(relativeParentPath, file.name)),
+                title: getTitleFromMarkdownFileOrThrow(relativePath),
                 filename: file.name
             });
         }
@@ -81,4 +84,15 @@ function getTitleFromMarkdownFileOrThrow(relativePath) {
     }
 
     return title;
+}
+
+function getDescriptionFromDirectoryReadme(relativeDirectoryPath) {
+    const absolutePath = pathUtils.getAbsolutePath(path.join(relativeDirectoryPath, "README.md"));
+
+    if (fs.existsSync(absolutePath)) {
+        const contents = fs.readFileSync(absolutePath, { encoding: "utf-8" });
+        return fileContents.getDirectoryDescriptionFromCurrentContents(contents);
+    } else {
+        return "";
+    }
 }
