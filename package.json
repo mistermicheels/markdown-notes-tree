@@ -7,7 +7,7 @@
         "markdown-notes-tree": "cli.js"
     },
     "scripts": {
-        "test": "jest",
+        "test": "jest --collectCoverage",
         "check-formatting": "prettier-check *.js src/*.js",
         "build": "npm run check-formatting && npm run test"
     },
@@ -23,6 +23,7 @@
     },
     "license": "MIT",
     "devDependencies": {
+        "codecov": "^3.6.5",
         "dedent": "^0.7.0",
         "fs-extra": "^8.1.0",
         "jest": "^24.9.0",
