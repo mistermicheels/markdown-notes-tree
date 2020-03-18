@@ -5,13 +5,14 @@ const fs = require("fs");
 
 const pathUtils = require("./path-utils");
 const fileContents = require("./file-contents");
+const treeMarkdownGenerator = require("./tree-markdown-generator");
 
 module.exports = { writeTreeToMainReadme, writeTreesForDirectories };
 
 function writeTreeToMainReadme(tree, endOfLine, options) {
     const mainReadmePath = pathUtils.getAbsolutePath("README.md");
     const currentContents = fs.readFileSync(mainReadmePath, { encoding: "utf-8" });
-    const markdownForTree = fileContents.getMarkdownForTree(tree, endOfLine, options);
+    const markdownForTree = treeMarkdownGenerator.getMarkdownForTree(tree, endOfLine, options);
 
     const newContents = fileContents.getNewMainReadmeContents(
         currentContents,
@@ -65,7 +66,11 @@ function writeTreeToDirectoryReadme(pathParts, name, treeForDirectory, endOfLine
         currentContents = fs.readFileSync(absoluteFilePath, { encoding: "utf-8" });
     }
 
-    const markdownForTree = fileContents.getMarkdownForTree(treeForDirectory, endOfLine, options);
+    const markdownForTree = treeMarkdownGenerator.getMarkdownForTree(
+        treeForDirectory,
+        endOfLine,
+        options
+    );
 
     const newContents = fileContents.getNewDirectoryReadmeContents(
         name,
