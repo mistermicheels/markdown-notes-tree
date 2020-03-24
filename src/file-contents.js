@@ -34,23 +34,28 @@ function getNewMainReadmeContents(currentContents, markdownForTree, endOfLine) {
     currentContents = getContentsWithUpdatedMarkers(currentContents);
 
     const indexTreeStartMarker = currentContents.indexOf(markers.mainReadmeTreeStart);
+    const treeStartMarkerPresent = indexTreeStartMarker >= 0;
     let contentsBeforeTree;
 
-    if (indexTreeStartMarker >= 0) {
+    if (treeStartMarkerPresent) {
         contentsBeforeTree = currentContents.substring(0, indexTreeStartMarker);
     } else {
         contentsBeforeTree = currentContents + endOfLine.repeat(2);
     }
 
     const indexTreeEndMarker = currentContents.indexOf(markers.mainReadmeTreeEnd);
+    const treeEndMarkerPresent = indexTreeEndMarker >= 0;
     let contentsAfterTree;
 
-    if (indexTreeEndMarker >= 0 && indexTreeEndMarker < indexTreeStartMarker) {
-        throw new Error("Invalid file structure: tree end marker found before tree start marker");
-    } else if (indexTreeEndMarker >= 0) {
+    const treeEndMarkerValid =
+        treeEndMarkerPresent && treeStartMarkerPresent && indexTreeEndMarker > indexTreeStartMarker;
+
+    if (treeEndMarkerValid) {
         contentsAfterTree = currentContents.substring(
             indexTreeEndMarker + markers.mainReadmeTreeEnd.length
         );
+    } else if (treeEndMarkerPresent) {
+        throw new Error("Invalid file structure: tree end marker found before tree start marker");
     } else {
         contentsAfterTree = endOfLine;
     }
@@ -100,27 +105,21 @@ function getNewDirectoryReadmeContents(name, currentContents, markdownForTree, e
 }
 
 function getDirectoryDescriptionFromCurrentContents(currentContents) {
-    const indexDescriptionStartMarker = currentContents.indexOf(
-        markers.directoryReadmeDescriptionStart
-    );
+    const indexStartMarker = currentContents.indexOf(markers.directoryReadmeDescriptionStart);
+    const indexEndMarker = currentContents.indexOf(markers.directoryReadmeDescriptionEnd);
 
-    const indexDescriptionEndMarker = currentContents.indexOf(
-        markers.directoryReadmeDescriptionEnd
-    );
+    const startMarkerPresent = indexStartMarker >= 0;
+    const endMarkerPresent = indexEndMarker >= 0;
 
-    const validMarkers =
-        indexDescriptionStartMarker >= 0 &&
-        indexDescriptionEndMarker >= 0 &&
-        indexDescriptionEndMarker > indexDescriptionStartMarker;
+    const markersValid =
+        startMarkerPresent && endMarkerPresent && indexEndMarker > indexStartMarker;
 
-    if (validMarkers) {
-        const descriptionStart =
-            indexDescriptionStartMarker + markers.directoryReadmeDescriptionStart.length;
-
-        const descriptionEnd = indexDescriptionEndMarker;
+    if (markersValid) {
+        const descriptionStart = indexStartMarker + markers.directoryReadmeDescriptionStart.length;
+        const descriptionEnd = indexEndMarker;
 
         return currentContents.substring(descriptionStart, descriptionEnd).trim();
-    } else if (indexDescriptionStartMarker >= 0 || indexDescriptionEndMarker >= 0) {
+    } else if (startMarkerPresent || endMarkerPresent) {
         throw new Error(
             "Invalid file structure: only one description marker found or end marker found before start marker"
         );
