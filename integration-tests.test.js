@@ -32,10 +32,32 @@ describe("markdown-notes-tree", () => {
     });
 
     test("it should throw an error if a Markdown file does not start with the title", () => {
-        const resultFolderPath = getTestFolderPath("error-no-title", "result");
+        const folderName = "error-no-title";
+        const resultFolderPath = getTestFolderPath(folderName, "result");
+        const invalidFilePath = path.join(resultFolderPath, "sub1", "file1a.md");
 
-        expect(() => executeTestScenario("error-no-title", [])).toThrow(
-            `No title found for Markdown file ${path.join(resultFolderPath, "sub1", "file1a.md")}`
+        expect(() => executeTestScenario(folderName, [])).toThrow(
+            `No title found for Markdown file ${invalidFilePath}`
+        );
+    });
+
+    test("it should throw an error if an existing directory README has an incorrect structure", () => {
+        const folderName = "error-invalid-file-structure-directory-readme";
+        const resultFolderPath = getTestFolderPath(folderName, "result");
+        const invalidFilePath = path.join(resultFolderPath, "sub1", "README.md");
+
+        expect(() => executeTestScenario(folderName, [])).toThrow(
+            `Cannot get description from file ${invalidFilePath}: Invalid file structure: only one description marker found or end marker found before start marker`
+        );
+    });
+
+    test("it should throw an error if the main README has an incorrect file structure", () => {
+        const folderName = "error-invalid-file-structure-main-readme";
+        const resultFolderPath = getTestFolderPath(folderName, "result");
+        const invalidFilePath = path.join(resultFolderPath, "README.md");
+
+        expect(() => executeTestScenario(folderName, [])).toThrow(
+            `Cannot get new contents for file ${invalidFilePath}: Invalid file structure: tree end marker found before tree start marker`
         );
     });
 

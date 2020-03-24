@@ -89,10 +89,18 @@ function getTitleFromMarkdownFileOrThrow(relativePath) {
 function getDescriptionFromDirectoryReadme(relativeDirectoryPath) {
     const absolutePath = pathUtils.getAbsolutePath(path.join(relativeDirectoryPath, "README.md"));
 
-    if (fs.existsSync(absolutePath)) {
-        const contents = fs.readFileSync(absolutePath, { encoding: "utf-8" });
-        return fileContents.getDirectoryDescriptionFromCurrentContents(contents);
-    } else {
+    if (!fs.existsSync(absolutePath)) {
         return "";
     }
+
+    let description;
+
+    try {
+        const contents = fs.readFileSync(absolutePath, { encoding: "utf-8" });
+        description = fileContents.getDirectoryDescriptionFromCurrentContents(contents);
+    } catch (error) {
+        throw new Error(`Cannot get description from file ${absolutePath}: ${error.message}`);
+    }
+
+    return description;
 }

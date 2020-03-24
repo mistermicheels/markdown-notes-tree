@@ -14,11 +14,17 @@ function writeTreeToMainReadme(tree, endOfLine, options) {
     const currentContents = fs.readFileSync(mainReadmePath, { encoding: "utf-8" });
     const markdownForTree = treeMarkdownGenerator.getMarkdownForTree(tree, endOfLine, options);
 
-    const newContents = fileContents.getNewMainReadmeContents(
-        currentContents,
-        markdownForTree,
-        endOfLine
-    );
+    let newContents;
+
+    try {
+        newContents = fileContents.getNewMainReadmeContents(
+            currentContents,
+            markdownForTree,
+            endOfLine
+        );
+    } catch (error) {
+        throw new Error(`Cannot get new contents for file ${mainReadmePath}: ${error.message}`);
+    }
 
     fs.writeFileSync(mainReadmePath, newContents, { encoding: "utf-8" });
 }
