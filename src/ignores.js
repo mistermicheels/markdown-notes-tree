@@ -10,7 +10,7 @@ function shouldIgnoreDirectory(name, relativeParentPath, options) {
         return true;
     }
 
-    return shouldIgnoreBasedOnGlobs(name, relativeParentPath, options.ignoredGlobs);
+    return shouldIgnoreBasedOnGlobs(name, relativeParentPath, options);
 }
 
 function shouldIgnoreDirectoryBasedOnName(name, options) {
@@ -26,13 +26,13 @@ function shouldIgnoreFile(name, relativeParentPath, options) {
         return true;
     }
 
-    return shouldIgnoreBasedOnGlobs(name, relativeParentPath, options.ignoredGlobs);
+    return shouldIgnoreBasedOnGlobs(name, relativeParentPath, options);
 }
 
-function shouldIgnoreBasedOnGlobs(name, relativeParentPath, ignoredGlobs) {
+function shouldIgnoreBasedOnGlobs(name, relativeParentPath, options) {
     const relativePath = path.join(relativeParentPath, name);
 
-    for (const ignoredGlob of ignoredGlobs) {
+    for (const ignoredGlob of options.ignore) {
         if (minimatch(relativePath, ignoredGlob)) {
             return true;
         }

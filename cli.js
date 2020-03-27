@@ -3,6 +3,10 @@
 
 const markdownNotesTree = require("./src/index");
 
-const commandLineArguments = process.argv.slice(2);
-const logger = message => console.log(message);
-markdownNotesTree.execute(commandLineArguments, logger);
+try {
+    const commandLineArguments = process.argv.slice(2);
+    const logger = message => console.log(message);
+    markdownNotesTree.execute(commandLineArguments, logger);
+} catch (error) {
+    console.error(`Error: ${error.message}`);
+}

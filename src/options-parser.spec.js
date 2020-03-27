@@ -5,27 +5,15 @@ const optionsParser = require("./options-parser");
 describe("optionsParser", () => {
     describe("getOptions", () => {
         test("it should return the default options if no arguments are specified", () => {
-            const defaultOptions = {
-                ignoredGlobs: [],
-                includeAllDirectoriesByDefault: false,
-                linkToSubdirectoryReadme: false,
-                noSubdirectoryTrees: false,
-                notesBeforeDirectories: false,
-                orderNotesByTitle: false,
-                silent: false,
-                subdirectoryDescriptionOnNewLine: false,
-                useTabs: false
-            };
-
             const options = optionsParser.getOptions([]);
 
-            expect(options).toEqual(defaultOptions);
+            expect(options).toEqual(optionsParser.defaultOptions);
         });
 
         test("it should allow passing a single glob to ignore", () => {
             const options = optionsParser.getOptions(["--ignore", "**/test.md"]);
 
-            expect(options.ignoredGlobs).toEqual(["**/test.md"]);
+            expect(options.ignore).toEqual(["**/test.md"]);
         });
 
         test("it should allow passing multiple globs to ignore", () => {
@@ -36,7 +24,7 @@ describe("optionsParser", () => {
                 "CONTRIBUTING.md"
             ]);
 
-            expect(options.ignoredGlobs).toEqual(["**/test.md", "CONTRIBUTING.md"]);
+            expect(options.ignore).toEqual(["**/test.md", "CONTRIBUTING.md"]);
         });
 
         test("it should allow passing boolean options", () => {
@@ -52,8 +40,18 @@ describe("optionsParser", () => {
                 "--linkToSubdirectoryReadme"
             ]);
 
-            expect(options.ignoredGlobs).toEqual(["**/test.md"]);
+            expect(options.ignore).toEqual(["**/test.md"]);
             expect(options.linkToSubdirectoryReadme).toBe(true);
+        });
+
+        test("it should fail for unknown arguments", () => {
+            expect(() => optionsParser.getOptions(["--silnt"])).toThrow("Unknown argument silnt");
+        });
+
+        test("it should fail for incorrect use of arguments", () => {
+            expect(() => optionsParser.getOptions(["--silent", "3"])).toThrow(
+                "Unexpected use of argument silent"
+            );
         });
     });
 });

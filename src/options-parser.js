@@ -2,30 +2,54 @@
 
 const minimist = require("minimist");
 
-module.exports = { getOptions };
+const defaultOptions = {
+    ignore: [],
+    includeAllDirectoriesByDefault: false,
+    linkToSubdirectoryReadme: false,
+    noSubdirectoryTrees: false,
+    notesBeforeDirectories: false,
+    orderNotesByTitle: false,
+    silent: false,
+    subdirectoryDescriptionOnNewLine: false,
+    useTabs: false
+};
+
+module.exports = { getOptions, defaultOptions };
+
+// minimist adds a key _ by default
+const argumentsKeysToIgnore = ["_"];
 
 function getOptions(commandLineArguments) {
     const parsedArguments = minimist(commandLineArguments);
+    parsedArguments.ignore = makeStringArray(parsedArguments.ignore);
 
-    return {
-        ignoredGlobs: makeArray(parsedArguments.ignore),
-        includeAllDirectoriesByDefault: parsedArguments.includeAllDirectoriesByDefault || false,
-        linkToSubdirectoryReadme: parsedArguments.linkToSubdirectoryReadme || false,
-        noSubdirectoryTrees: parsedArguments.noSubdirectoryTrees || false,
-        notesBeforeDirectories: parsedArguments.notesBeforeDirectories || false,
-        orderNotesByTitle: parsedArguments.orderNotesByTitle || false,
-        silent: parsedArguments.silent || false,
-        subdirectoryDescriptionOnNewLine: parsedArguments.subdirectoryDescriptionOnNewLine || false,
-        useTabs: parsedArguments.useTabs || false
-    };
+    const options = { ...defaultOptions };
+
+    for (const key in parsedArguments) {
+        const keyIsKnown = key in defaultOptions;
+
+        if (keyIsKnown && isSameType(parsedArguments[key], defaultOptions[key])) {
+            options[key] = parsedArguments[key];
+        } else if (keyIsKnown) {
+            throw new Error(`Unexpected use of argument ${key}`);
+        } else if (!argumentsKeysToIgnore.includes(key)) {
+            throw new Error(`Unknown argument ${key}`);
+        }
+    }
+
+    return options;
 }
 
-function makeArray(value) {
+function makeStringArray(value) {
     if (!value) {
         return [];
     } else if (!Array.isArray(value)) {
-        return [value];
+        return [value.toString()];
     } else {
-        return value;
+        return value.map(entry => entry.toString());
     }
+}
+
+function isSameType(a, b) {
+    return Object.prototype.toString.apply(a) === Object.prototype.toString.apply(b);
 }
