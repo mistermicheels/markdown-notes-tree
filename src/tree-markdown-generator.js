@@ -4,24 +4,19 @@ module.exports = {
     getMarkdownForTree
 };
 
-function getMarkdownForTree(tree, endOfLine, options) {
-    const lines = getMarkdownLinesForTree(tree, [], endOfLine, options);
-    return lines.join(endOfLine);
+function getMarkdownForTree(tree, environment) {
+    const lines = getMarkdownLinesForTree(tree, [], environment);
+    return lines.join(environment.endOfLine);
 }
 
-function getMarkdownLinesForTree(tree, parentPathParts, endOfLine, options) {
+function getMarkdownLinesForTree(tree, parentPathParts, environment) {
     const markdownLines = [];
-    const indentationUnit = getIndentationUnit(options);
+    const indentationUnit = getIndentationUnit(environment);
 
     for (const treeNode of tree) {
-        const markdownForTreeNode = getMarkdownForTreeNode(
-            treeNode,
-            parentPathParts,
-            endOfLine,
-            options
-        );
+        const markdownForTreeNode = getMarkdownForTreeNode(treeNode, parentPathParts, environment);
 
-        markdownLines.push(...markdownForTreeNode.split(endOfLine));
+        markdownLines.push(...markdownForTreeNode.split(environment.endOfLine));
 
         if (treeNode.isDirectory) {
             const fullPathParts = [...parentPathParts, treeNode.filename];
@@ -29,8 +24,7 @@ function getMarkdownLinesForTree(tree, parentPathParts, endOfLine, options) {
             const linesForChildren = getMarkdownLinesForTree(
                 treeNode.children,
                 fullPathParts,
-                endOfLine,
-                options
+                environment
             );
 
             const indentedLines = linesForChildren.map(line => indentationUnit + line);
@@ -41,23 +35,23 @@ function getMarkdownLinesForTree(tree, parentPathParts, endOfLine, options) {
     return markdownLines;
 }
 
-function getIndentationUnit(options) {
+function getIndentationUnit(environment) {
     // Markdown standard: either four spaces or tabs
-    if (options.useTabs) {
+    if (environment.options.useTabs) {
         return "\t";
     } else {
         return " ".repeat(4);
     }
 }
 
-function getMarkdownForTreeNode(treeNode, parentPath, endOfLine, options) {
+function getMarkdownForTreeNode(treeNode, parentPath, environment) {
     const linkText = getLinkTextForTreeNode(treeNode);
-    const linkTarget = getLinkTargetForTreeNode(treeNode, parentPath, options);
+    const linkTarget = getLinkTargetForTreeNode(treeNode, parentPath, environment);
 
     const basicLine = `- [${linkText}](${linkTarget})`;
 
     if (treeNode.description) {
-        const descriptionSeparator = getDescriptionSeparator(endOfLine, options);
+        const descriptionSeparator = getDescriptionSeparator(environment);
         return basicLine + descriptionSeparator + treeNode.description;
     } else {
         return basicLine;
@@ -72,20 +66,20 @@ function getLinkTextForTreeNode(treeNode) {
     }
 }
 
-function getLinkTargetForTreeNode(treeNode, parentPathParts, options) {
+function getLinkTargetForTreeNode(treeNode, parentPathParts, environment) {
     const fullPathParts = [...parentPathParts, treeNode.filename];
     let linkTarget = fullPathParts.join("/");
 
-    if (treeNode.isDirectory && options.linkToSubdirectoryReadme) {
+    if (treeNode.isDirectory && environment.options.linkToSubdirectoryReadme) {
         linkTarget = linkTarget + "/README.md";
     }
 
     return linkTarget;
 }
 
-function getDescriptionSeparator(endOfLine, options) {
-    if (options.subdirectoryDescriptionOnNewLine) {
-        return "  " + endOfLine + getIndentationUnit(options);
+function getDescriptionSeparator(environment) {
+    if (environment.options.subdirectoryDescriptionOnNewLine) {
+        return "  " + environment.endOfLine + getIndentationUnit(environment);
     } else {
         return " - ";
     }

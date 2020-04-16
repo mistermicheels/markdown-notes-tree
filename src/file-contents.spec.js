@@ -36,7 +36,7 @@ describe("fileContents", () => {
             const result = fileContents.getNewMainReadmeContents(
                 currentContents,
                 "markdownForTree",
-                endOfLine
+                { endOfLine }
             );
 
             const expected =
@@ -66,7 +66,7 @@ describe("fileContents", () => {
             const result = fileContents.getNewMainReadmeContents(
                 currentContents,
                 "markdownForTree",
-                endOfLine
+                { endOfLine }
             );
 
             const expected =
@@ -98,7 +98,7 @@ describe("fileContents", () => {
             const result = fileContents.getNewMainReadmeContents(
                 currentContents,
                 "markdownForTree",
-                endOfLine
+                { endOfLine }
             );
 
             const expected =
@@ -126,7 +126,7 @@ describe("fileContents", () => {
             const result = fileContents.getNewMainReadmeContents(
                 currentContents,
                 "markdownForTree",
-                endOfLine
+                { endOfLine }
             );
 
             const expected =
@@ -152,7 +152,9 @@ describe("fileContents", () => {
                 markdownForTree`) + endOfLine;
 
             expect(() =>
-                fileContents.getNewMainReadmeContents(currentContents, "markdownForTree", endOfLine)
+                fileContents.getNewMainReadmeContents(currentContents, "markdownForTree", {
+                    endOfLine
+                })
             ).toThrow("Invalid file structure: tree end marker found before tree start marker");
         });
 
@@ -165,7 +167,9 @@ describe("fileContents", () => {
                 markdownForTree`) + endOfLine;
 
             expect(() =>
-                fileContents.getNewMainReadmeContents(currentContents, "markdownForTree", endOfLine)
+                fileContents.getNewMainReadmeContents(currentContents, "markdownForTree", {
+                    endOfLine
+                })
             ).toThrow("Invalid file structure: tree end marker found before tree start marker");
         });
     });
@@ -178,7 +182,7 @@ describe("fileContents", () => {
                 "name",
                 currentContents,
                 "markdownForTree",
-                endOfLine
+                { endOfLine }
             );
 
             const expected =
@@ -207,7 +211,7 @@ describe("fileContents", () => {
                 "name",
                 currentContents,
                 "markdownForTree",
-                endOfLine
+                { endOfLine }
             );
 
             const expected =
@@ -240,7 +244,7 @@ describe("fileContents", () => {
                 "name",
                 currentContents,
                 "markdownForTree",
-                endOfLine
+                { endOfLine }
             );
 
             const expected =
@@ -275,7 +279,7 @@ describe("fileContents", () => {
                 "name",
                 currentContents,
                 "markdownForTree",
-                endOfLine
+                { endOfLine }
             );
 
             const expected =
@@ -312,7 +316,7 @@ describe("fileContents", () => {
                 "name",
                 currentContents,
                 "markdownForTree",
-                endOfLine
+                { endOfLine }
             );
 
             const expected =
@@ -348,7 +352,7 @@ describe("fileContents", () => {
                     "name",
                     currentContents,
                     "markdownForTree",
-                    endOfLine
+                    { endOfLine }
                 )
             ).toThrow(
                 "Invalid file structure: only one description marker found or end marker found before start marker"

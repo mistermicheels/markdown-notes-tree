@@ -30,7 +30,7 @@ function getTitleFromMarkdownContents(contents) {
     }
 }
 
-function getNewMainReadmeContents(currentContents, markdownForTree, endOfLine) {
+function getNewMainReadmeContents(currentContents, markdownForTree, environment) {
     currentContents = getContentsWithUpdatedMarkers(currentContents);
 
     const indexTreeStartMarker = currentContents.indexOf(markers.mainReadmeTreeStart);
@@ -40,7 +40,7 @@ function getNewMainReadmeContents(currentContents, markdownForTree, endOfLine) {
     if (treeStartMarkerPresent) {
         contentsBeforeTree = currentContents.substring(0, indexTreeStartMarker);
     } else {
-        contentsBeforeTree = currentContents + endOfLine.repeat(2);
+        contentsBeforeTree = currentContents + environment.endOfLine.repeat(2);
     }
 
     const indexTreeEndMarker = currentContents.indexOf(markers.mainReadmeTreeEnd);
@@ -57,15 +57,15 @@ function getNewMainReadmeContents(currentContents, markdownForTree, endOfLine) {
     } else if (treeEndMarkerPresent) {
         throw new Error("Invalid file structure: tree end marker found before tree start marker");
     } else {
-        contentsAfterTree = endOfLine;
+        contentsAfterTree = environment.endOfLine;
     }
 
     return (
         contentsBeforeTree +
         markers.mainReadmeTreeStart +
-        endOfLine.repeat(2) +
+        environment.endOfLine.repeat(2) +
         markdownForTree +
-        endOfLine.repeat(2) +
+        environment.endOfLine.repeat(2) +
         markers.mainReadmeTreeEnd +
         contentsAfterTree
     );
@@ -78,29 +78,30 @@ function getContentsWithUpdatedMarkers(contents) {
         .replace(markers.directoryReadmeStart_v_1_8_0, markers.directoryReadmeStart);
 }
 
-function getNewDirectoryReadmeContents(name, currentContents, markdownForTree, endOfLine) {
+function getNewDirectoryReadmeContents(name, currentContents, markdownForTree, environment) {
     currentContents = getContentsWithUpdatedMarkers(currentContents);
 
     const title = `# ${name}`;
     const description = getDirectoryDescriptionFromCurrentContents(currentContents);
 
-    let partBetweenDescriptionMarkers = endOfLine.repeat(2);
+    let partBetweenDescriptionMarkers = environment.endOfLine.repeat(2);
 
     if (description) {
-        partBetweenDescriptionMarkers = endOfLine.repeat(2) + description + endOfLine.repeat(2);
+        partBetweenDescriptionMarkers =
+            environment.endOfLine.repeat(2) + description + environment.endOfLine.repeat(2);
     }
 
     return (
         markers.directoryReadmeStart +
-        endOfLine.repeat(2) +
+        environment.endOfLine.repeat(2) +
         title +
-        endOfLine.repeat(2) +
+        environment.endOfLine.repeat(2) +
         markers.directoryReadmeDescriptionStart +
         partBetweenDescriptionMarkers +
         markers.directoryReadmeDescriptionEnd +
-        endOfLine.repeat(2) +
+        environment.endOfLine.repeat(2) +
         markdownForTree +
-        endOfLine
+        environment.endOfLine
     );
 }
 

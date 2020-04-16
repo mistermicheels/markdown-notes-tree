@@ -10,11 +10,11 @@ const fileContents = require("./file-contents");
 
 module.exports = { buildTree };
 
-function buildTree(options) {
-    return buildTreeStartingAt("", options);
+function buildTree(environment) {
+    return buildTreeStartingAt("", environment);
 }
 
-function buildTreeStartingAt(relativePath, options) {
+function buildTreeStartingAt(relativePath, environment) {
     const absolutePath = pathUtils.getAbsolutePath(relativePath);
     const entries = fs.readdirSync(absolutePath, { withFileTypes: true });
 
@@ -22,21 +22,26 @@ function buildTreeStartingAt(relativePath, options) {
     const directories = entries.filter(entry => entry.isDirectory());
     const files = entries.filter(entry => !entry.isDirectory());
 
-    const treeNodesForDirectories = getTreeNodesForDirectories(directories, relativePath, options);
-    const treeNodesForFiles = getTreeNodesForFiles(files, relativePath, options);
+    const treeNodesForDirectories = getTreeNodesForDirectories(
+        directories,
+        relativePath,
+        environment
+    );
 
-    if (options.notesBeforeDirectories) {
+    const treeNodesForFiles = getTreeNodesForFiles(files, relativePath, environment);
+
+    if (environment.options.notesBeforeDirectories) {
         return [...treeNodesForFiles, ...treeNodesForDirectories];
     } else {
         return [...treeNodesForDirectories, ...treeNodesForFiles];
     }
 }
 
-function getTreeNodesForDirectories(directories, relativeParentPath, options) {
+function getTreeNodesForDirectories(directories, relativeParentPath, environment) {
     const treeNodes = [];
 
     for (const directory of directories) {
-        if (!ignores.shouldIgnoreDirectory(directory.name, relativeParentPath, options)) {
+        if (!ignores.shouldIgnoreDirectory(directory.name, relativeParentPath, environment)) {
             const relativePath = path.join(relativeParentPath, directory.name);
 
             treeNodes.push({
@@ -44,7 +49,7 @@ function getTreeNodesForDirectories(directories, relativeParentPath, options) {
                 title: directory.name,
                 description: getDescriptionFromDirectoryReadme(relativePath),
                 filename: directory.name,
-                children: buildTreeStartingAt(relativePath, options)
+                children: buildTreeStartingAt(relativePath, environment)
             });
         }
     }
@@ -52,11 +57,11 @@ function getTreeNodesForDirectories(directories, relativeParentPath, options) {
     return treeNodes;
 }
 
-function getTreeNodesForFiles(files, relativeParentPath, options) {
+function getTreeNodesForFiles(files, relativeParentPath, environment) {
     const treeNodes = [];
 
     for (const file of files) {
-        if (!ignores.shouldIgnoreFile(file.name, relativeParentPath, options)) {
+        if (!ignores.shouldIgnoreFile(file.name, relativeParentPath, environment)) {
             const relativePath = path.join(relativeParentPath, file.name);
 
             treeNodes.push({
@@ -67,7 +72,7 @@ function getTreeNodesForFiles(files, relativeParentPath, options) {
         }
     }
 
-    if (options.orderNotesByTitle) {
+    if (environment.options.orderNotesByTitle) {
         treeNodes.sort((a, b) => stringUtils.compareIgnoringCaseAndDiacritics(a.title, b.title));
     }
 

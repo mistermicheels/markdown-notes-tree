@@ -9,10 +9,10 @@ const treeMarkdownGenerator = require("./tree-markdown-generator");
 
 module.exports = { writeTreeToMainReadme, writeTreesForDirectories };
 
-function writeTreeToMainReadme(tree, endOfLine, options) {
+function writeTreeToMainReadme(tree, environment) {
     const mainReadmePath = pathUtils.getAbsolutePath("README.md");
     const currentContents = fs.readFileSync(mainReadmePath, { encoding: "utf-8" });
-    const markdownForTree = treeMarkdownGenerator.getMarkdownForTree(tree, endOfLine, options);
+    const markdownForTree = treeMarkdownGenerator.getMarkdownForTree(tree, environment);
 
     let newContents;
 
@@ -20,7 +20,7 @@ function writeTreeToMainReadme(tree, endOfLine, options) {
         newContents = fileContents.getNewMainReadmeContents(
             currentContents,
             markdownForTree,
-            endOfLine
+            environment
         );
     } catch (error) {
         throw new Error(`Cannot get new contents for file ${mainReadmePath}: ${error.message}`);
@@ -29,23 +29,21 @@ function writeTreeToMainReadme(tree, endOfLine, options) {
     fs.writeFileSync(mainReadmePath, newContents, { encoding: "utf-8" });
 }
 
-function writeTreesForDirectories(mainTree, endOfLine, options, logger) {
+function writeTreesForDirectories(mainTree, environment) {
     for (const treeNode of mainTree) {
         if (treeNode.isDirectory) {
             writeTreesForDirectory(
                 [treeNode.filename],
                 treeNode.filename,
                 treeNode.children,
-                endOfLine,
-                options,
-                logger
+                environment
             );
         }
     }
 }
 
-function writeTreesForDirectory(pathParts, name, treeForDirectory, endOfLine, options, logger) {
-    writeTreeToDirectoryReadme(pathParts, name, treeForDirectory, endOfLine, options, logger);
+function writeTreesForDirectory(pathParts, name, treeForDirectory, environment) {
+    writeTreeToDirectoryReadme(pathParts, name, treeForDirectory, environment);
 
     for (const treeNode of treeForDirectory) {
         if (treeNode.isDirectory) {
@@ -53,15 +51,13 @@ function writeTreesForDirectory(pathParts, name, treeForDirectory, endOfLine, op
                 [...pathParts, treeNode.filename],
                 treeNode.filename,
                 treeNode.children,
-                endOfLine,
-                options,
-                logger
+                environment
             );
         }
     }
 }
 
-function writeTreeToDirectoryReadme(pathParts, name, treeForDirectory, endOfLine, options, logger) {
+function writeTreeToDirectoryReadme(pathParts, name, treeForDirectory, environment) {
     const filePathParts = [...pathParts, "README.md"];
     const relativeFilePath = path.join(...filePathParts);
     const absoluteFilePath = pathUtils.getAbsolutePath(relativeFilePath);
@@ -72,19 +68,15 @@ function writeTreeToDirectoryReadme(pathParts, name, treeForDirectory, endOfLine
         currentContents = fs.readFileSync(absoluteFilePath, { encoding: "utf-8" });
     }
 
-    const markdownForTree = treeMarkdownGenerator.getMarkdownForTree(
-        treeForDirectory,
-        endOfLine,
-        options
-    );
+    const markdownForTree = treeMarkdownGenerator.getMarkdownForTree(treeForDirectory, environment);
 
     const newContents = fileContents.getNewDirectoryReadmeContents(
         name,
         currentContents,
         markdownForTree,
-        endOfLine
+        environment
     );
 
-    logger(`Writing to ${absoluteFilePath}`);
+    environment.logger(`Writing to ${absoluteFilePath}`);
     fs.writeFileSync(absoluteFilePath, newContents, { encoding: "utf-8" });
 }

@@ -12,18 +12,17 @@ module.exports = { execute };
 function execute(commandLineArguments, defaultLogger) {
     const options = optionsParser.getOptions(commandLineArguments);
     const logger = getLogger(defaultLogger, options);
+    const environment = { options, logger, endOfLine: os.EOL };
 
     logger("Processing files in order to build notes tree");
-    const tree = treeBuilder.buildTree(options);
-
-    const endOfLine = os.EOL;
+    const tree = treeBuilder.buildTree(environment);
 
     logger("Writing notes tree to main README file");
-    treeWriter.writeTreeToMainReadme(tree, endOfLine, options);
+    treeWriter.writeTreeToMainReadme(tree, environment);
 
     if (!options.noSubdirectoryTrees) {
         logger("Writing trees for directories");
-        treeWriter.writeTreesForDirectories(tree, endOfLine, options, logger);
+        treeWriter.writeTreesForDirectories(tree, environment);
     }
 
     logger("Finished execution");

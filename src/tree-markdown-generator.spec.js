@@ -22,9 +22,12 @@ describe("treeMarkdownGenerator", () => {
         ];
 
         test("it should generate a tree with proper formatting and indentation", () => {
-            const result = treeMarkdownGenerator.getMarkdownForTree(tree, endOfLine, {
-                linkToSubdirectoryReadme: false,
-                useTabs: false
+            const result = treeMarkdownGenerator.getMarkdownForTree(tree, {
+                endOfLine,
+                options: {
+                    linkToSubdirectoryReadme: false,
+                    useTabs: false
+                }
             });
 
             const expected =
@@ -34,9 +37,12 @@ describe("treeMarkdownGenerator", () => {
         });
 
         test("it should allow linking directly to subdirectory README files", () => {
-            const result = treeMarkdownGenerator.getMarkdownForTree(tree, endOfLine, {
-                linkToSubdirectoryReadme: true,
-                useTabs: false
+            const result = treeMarkdownGenerator.getMarkdownForTree(tree, {
+                endOfLine,
+                options: {
+                    linkToSubdirectoryReadme: true,
+                    useTabs: false
+                }
             });
 
             const expected =
@@ -48,9 +54,12 @@ describe("treeMarkdownGenerator", () => {
         });
 
         test("it should allow using tabs instead of spaces", () => {
-            const result = treeMarkdownGenerator.getMarkdownForTree(tree, endOfLine, {
-                linkToSubdirectoryReadme: false,
-                useTabs: true
+            const result = treeMarkdownGenerator.getMarkdownForTree(tree, {
+                endOfLine,
+                options: {
+                    linkToSubdirectoryReadme: false,
+                    useTabs: true
+                }
             });
 
             const expected =
@@ -86,11 +95,13 @@ describe("treeMarkdownGenerator", () => {
             test("it should include the description", () => {
                 const result = treeMarkdownGenerator.getMarkdownForTree(
                     treeIncludingFolderDescription,
-                    endOfLine,
                     {
-                        linkToSubdirectoryReadme: false,
-                        subdirectoryDescriptionOnNewLine: false,
-                        useTabs: false
+                        endOfLine,
+                        options: {
+                            linkToSubdirectoryReadme: false,
+                            subdirectoryDescriptionOnNewLine: false,
+                            useTabs: false
+                        }
                     }
                 );
 
@@ -107,11 +118,13 @@ describe("treeMarkdownGenerator", () => {
             test("it should allow putting the description on a new line", () => {
                 const result = treeMarkdownGenerator.getMarkdownForTree(
                     treeIncludingFolderDescription,
-                    endOfLine,
                     {
-                        linkToSubdirectoryReadme: false,
-                        subdirectoryDescriptionOnNewLine: true,
-                        useTabs: false
+                        endOfLine,
+                        options: {
+                            linkToSubdirectoryReadme: false,
+                            subdirectoryDescriptionOnNewLine: true,
+                            useTabs: false
+                        }
                     }
                 );
 
