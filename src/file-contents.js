@@ -21,13 +21,18 @@ const markers = {
 };
 
 function getTitleFromMarkdownContents(contents) {
-    const firstLine = contents.split(/\r\n|\r|\n/, 1)[0];
+    contents = getContentsWithUpdatedMarkers(contents);
+    const lines = contents.split(/\r\n|\r|\n/);
 
-    if (firstLine.startsWith("# ")) {
-        return firstLine.substring(2);
-    } else {
-        return undefined;
+    for (const line of lines) {
+        if (line.startsWith("# ")) {
+            return line.substring(2);
+        } else if (line !== "" && line !== markers.directoryReadmeStart) {
+            return undefined;
+        }
     }
+
+    return undefined;
 }
 
 function getNewMainReadmeContents(currentContents, markdownForTree, environment) {
@@ -81,7 +86,10 @@ function getContentsWithUpdatedMarkers(contents) {
 function getNewDirectoryReadmeContents(name, currentContents, markdownForTree, environment) {
     currentContents = getContentsWithUpdatedMarkers(currentContents);
 
-    const title = `# ${name}`;
+    const currentTitle = getTitleFromMarkdownContents(currentContents);
+    const title = currentTitle || name;
+    const titleLine = `# ${title}`;
+
     const description = getDirectoryDescriptionFromCurrentContents(currentContents);
 
     let partBetweenDescriptionMarkers = environment.endOfLine.repeat(2);
@@ -94,7 +102,7 @@ function getNewDirectoryReadmeContents(name, currentContents, markdownForTree, e
     return (
         markers.directoryReadmeStart +
         environment.endOfLine.repeat(2) +
-        title +
+        titleLine +
         environment.endOfLine.repeat(2) +
         markers.directoryReadmeDescriptionStart +
         partBetweenDescriptionMarkers +

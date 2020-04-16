@@ -42,6 +42,10 @@ You can customize this using the `--ignore` and `--includeAllDirectoriesByDefaul
 
 The generated `README.md` files for subdirectories provide some space to add a description for the directory. If a description is provided, it will be preserved and it will also be included in generated trees containing the directory.
 
+## Subdirectory titles
+
+If you specify a custom title for a subdirectory, it will be preserved and it will be used in the tree instead of the name of the subdirectory.
+
 ## Command line arguments
 
 -   `--ignore`: Specify glob pattern for additional files or folders to ignore. You can use this argument multiple times in order to specify multiple glob patterns.

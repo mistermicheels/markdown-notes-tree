@@ -43,11 +43,16 @@ function getTreeNodesForDirectories(directories, relativeParentPath, environment
     for (const directory of directories) {
         if (!ignores.shouldIgnoreDirectory(directory.name, relativeParentPath, environment)) {
             const relativePath = path.join(relativeParentPath, directory.name);
+            const relativeReadmePath = path.join(relativePath, "README.md");
+            const readmeContents = getCurrentContents(relativeReadmePath);
 
             treeNodes.push({
                 isDirectory: true,
-                title: directory.name,
-                description: getDescriptionFromDirectoryReadme(relativePath),
+                title: fileContents.getTitleFromMarkdownContents(readmeContents) || directory.name,
+                description: getDescriptionFromDirectoryReadmeContents(
+                    readmeContents,
+                    relativeReadmePath
+                ),
                 filename: directory.name,
                 children: buildTreeStartingAt(relativePath, environment)
             });
@@ -79,33 +84,33 @@ function getTreeNodesForFiles(files, relativeParentPath, environment) {
     return treeNodes;
 }
 
-function getTitleFromMarkdownFileOrThrow(relativePath) {
+function getCurrentContents(relativePath) {
     const absolutePath = pathUtils.getAbsolutePath(relativePath);
-    const contents = fs.readFileSync(absolutePath, { encoding: "utf-8" });
-    const title = fileContents.getTitleFromMarkdownContents(contents);
-
-    if (!title) {
-        throw new Error(`No title found for Markdown file ${absolutePath}`);
-    }
-
-    return title;
-}
-
-function getDescriptionFromDirectoryReadme(relativeDirectoryPath) {
-    const absolutePath = pathUtils.getAbsolutePath(path.join(relativeDirectoryPath, "README.md"));
 
     if (!fs.existsSync(absolutePath)) {
         return "";
     }
 
-    let description;
+    return fs.readFileSync(absolutePath, { encoding: "utf-8" });
+}
 
+function getDescriptionFromDirectoryReadmeContents(contents, relativePath) {
     try {
-        const contents = fs.readFileSync(absolutePath, { encoding: "utf-8" });
-        description = fileContents.getDirectoryDescriptionFromCurrentContents(contents);
+        return fileContents.getDirectoryDescriptionFromCurrentContents(contents);
     } catch (error) {
+        const absolutePath = pathUtils.getAbsolutePath(relativePath);
         throw new Error(`Cannot get description from file ${absolutePath}: ${error.message}`);
     }
+}
 
-    return description;
+function getTitleFromMarkdownFileOrThrow(relativePath) {
+    const contents = getCurrentContents(relativePath);
+    const title = fileContents.getTitleFromMarkdownContents(contents);
+
+    if (!title) {
+        const absolutePath = pathUtils.getAbsolutePath(relativePath);
+        throw new Error(`No title found for Markdown file ${absolutePath}`);
+    }
+
+    return title;
 }

@@ -126,6 +126,10 @@ describe("markdown-notes-tree", () => {
         ]);
     });
 
+    test("it should use and preserve custom subdirectory titles if provided", () => {
+        executeTestScenario("subdirectory-title", []);
+    });
+
     test("it should allow using tabs for indentation", () => {
         executeTestScenario("use-tabs", ["--useTabs"]);
     });
