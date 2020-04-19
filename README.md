@@ -38,6 +38,12 @@ By default, the tool ignores:
 
 You can customize this using the `--ignore` and `--includeAllDirectoriesByDefault` command line arguments (see below).
 
+## Note titles from YAML front matter
+
+Normally, the tool expects to find the note's title as a level 1 Markdown heading on the first line of the file.
+
+However, if the note starts with YAML front matter that has a `tree_title` attribute, the value of `tree_title` will be used as the note's title in the tree.
+
 ## Subdirectory descriptions
 
 The generated `README.md` files for subdirectories provide some space to add a description for the directory. If a description is provided, it will be preserved and it will also be included in generated trees containing the directory.

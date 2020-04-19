@@ -1,5 +1,7 @@
 "use strict";
 
+const frontMatter = require("front-matter");
+
 module.exports = {
     getTitleFromMarkdownContents,
     getNewMainReadmeContents,
@@ -21,8 +23,17 @@ const markers = {
 };
 
 function getTitleFromMarkdownContents(contents) {
-    contents = getContentsWithUpdatedMarkers(contents);
-    const lines = contents.split(/\r\n|\r|\n/);
+    contents = normalizeContents(contents);
+
+    const parsedFrontMatter = frontMatter(contents);
+    const titleFromFrontMatter = parsedFrontMatter.attributes.tree_title;
+
+    if (titleFromFrontMatter) {
+        return titleFromFrontMatter;
+    }
+
+    const contentsWithoutFrontMatter = parsedFrontMatter.body.trimLeft();
+    const lines = contentsWithoutFrontMatter.split(/\r\n|\r|\n/);
 
     for (const line of lines) {
         if (line.startsWith("# ")) {
@@ -36,7 +47,7 @@ function getTitleFromMarkdownContents(contents) {
 }
 
 function getNewMainReadmeContents(currentContents, markdownForTree, environment) {
-    currentContents = getContentsWithUpdatedMarkers(currentContents);
+    currentContents = normalizeContents(currentContents);
 
     const indexTreeStartMarker = currentContents.indexOf(markers.mainReadmeTreeStart);
     const treeStartMarkerPresent = indexTreeStartMarker >= 0;
@@ -76,15 +87,16 @@ function getNewMainReadmeContents(currentContents, markdownForTree, environment)
     );
 }
 
-function getContentsWithUpdatedMarkers(contents) {
+function normalizeContents(contents) {
     return contents
         .replace(markers.mainReadmeTreeStart_v_1_8_0, markers.mainReadmeTreeStart)
         .replace(markers.mainReadmeTreeEnd_v_1_8_0, markers.mainReadmeTreeEnd)
-        .replace(markers.directoryReadmeStart_v_1_8_0, markers.directoryReadmeStart);
+        .replace(markers.directoryReadmeStart_v_1_8_0, markers.directoryReadmeStart)
+        .trimLeft();
 }
 
 function getNewDirectoryReadmeContents(name, currentContents, markdownForTree, environment) {
-    currentContents = getContentsWithUpdatedMarkers(currentContents);
+    currentContents = normalizeContents(currentContents);
 
     const currentTitle = getTitleFromMarkdownContents(currentContents);
     const title = currentTitle || name;

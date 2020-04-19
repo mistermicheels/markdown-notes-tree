@@ -102,6 +102,10 @@ describe("markdown-notes-tree", () => {
         executeTestScenario("no-subdirectory-trees", ["--noSubdirectoryTrees"], expectedLogs);
     });
 
+    test("it should use note titles from YAML front matter if provided", () => {
+        executeTestScenario("note-title-front-matter", []);
+    });
+
     test("it should allow putting notes before directories", () => {
         executeTestScenario("notes-before-directories", ["--notesBeforeDirectories"]);
     });
