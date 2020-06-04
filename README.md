@@ -40,9 +40,9 @@ You can customize this using the `--ignore` and `--includeAllDirectoriesByDefaul
 
 ## Note titles from YAML front matter
 
-Normally, the tool expects to find the note's title as a level 1 Markdown heading on the first line of the file.
+Normally, the tool expects to find the note's title as a level 1 Markdown heading on the first line of the file (potentially after some YAML front matter).
 
-However, if the note starts with YAML front matter that has a `tree_title` attribute, the value of `tree_title` will be used as the note's title in the tree.
+However, if a note starts with YAML front matter that has a `tree_title` attribute, the value of `tree_title` will be used as the note's title in the tree.
 
 ## Subdirectory descriptions
 
@@ -50,7 +50,7 @@ The generated `README.md` files for subdirectories provide some space to add a d
 
 ## Subdirectory titles
 
-If you specify a custom title for a subdirectory, it will be preserved and it will be used in the tree instead of the name of the subdirectory.
+By default, the generated `README.md` files for subdirectories use the subdirectory's name as title. If you change this into a custom title, that custom title will be preserved and it will be used in the tree instead of the name of the subdirectory.
 
 ## Command line arguments
 
