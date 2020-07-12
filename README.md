@@ -54,26 +54,63 @@ By default, the generated `README.md` files for subdirectories use the subdirect
 
 ## Command line arguments
 
--   `--ignore`: Specify glob pattern for additional files or folders to ignore. You can use this argument multiple times in order to specify multiple glob patterns.
-    -   Example: `markdown-notes-tree --ignore **/CONTRIBUTING.md`
-    -   Example: `markdown-notes-tree --ignore CONTRIBUTING.md --ignore sub1/CONTRIBUTING.md`
-    -   Example: `markdown-notes-tree --ignore exclude-this-folder`
--   `--includeAllDirectoriesByDefault`: Include all directories by default (don't apply the default ignored folders listed above). You can combine this with custom ignores as needed.
-    -   Example: `markdown-notes-tree --includeAllDirectoriesByDefault --ignore node_modules`
--   `--linkToSubdirectoryReadme`: When linking to a subdirectory, link directly to its `README.md` file. Note that this assumes that each subdirectory will actually have a `README.md` file. By default, the tool generates these automatically.
-    -   Example: `markdown-notes-tree --linkToSubdirectoryReadme`
--   `--noSubdirectoryTrees`: Don't write `README.md` files to subdirectories. Any existing `README.md` files in subdirectories will be ignored.
-    -   Example: `markdown-notes-tree --noSubdirectoryTrees`
--   `--notesBeforeDirectories`: If a directory contains both notes and subdirectories, put the notes before the subdirectories in he tree. By default, it's the other way around.
-    -   Example: `markdown-notes-tree --notesBeforeDirectories`
--   `--orderNotesByTitle`: Order notes in the same (sub)directory by title instead of by filename.
-    -   Example: `markdown-notes-tree --orderNotesByTitle`
--   `--silent`: Don't log to the console during execution.
-    -   Example: `markdown-notes-tree --silent`
--   `--subdirectoryDescriptionOnNewLine`: If subdirectory descriptions are provided, put them on a new line in the tree.
-    -   Example: `markdown-notes-tree --subdirectoryDescriptionOnNewLine`
--   `--useTabs`: Use tabs (instead of the standard four spaces) for indentation.
-    -   Example: `markdown-notes-tree --useTabs`
+### `--ignore`
+
+Specify glob pattern for additional files or folders to ignore. You can use this argument multiple times in order to specify multiple glob patterns.
+
+Example: `markdown-notes-tree --ignore **/CONTRIBUTING.md`
+
+Example: `markdown-notes-tree --ignore CONTRIBUTING.md --ignore sub1/CONTRIBUTING.md`
+
+Example: `markdown-notes-tree --ignore exclude-this-folder`
+
+### `--includeAllDirectoriesByDefault`
+
+Include all directories by default (don't apply the default ignored folders listed above). You can combine this with custom ignores as needed.
+
+Example: `markdown-notes-tree --includeAllDirectoriesByDefault --ignore node_modules`
+
+### `--linkToSubdirectoryReadme`
+
+When linking to a subdirectory, link directly to its `README.md` file. Note that this assumes that each subdirectory will actually have a `README.md` file. By default, the tool generates these automatically.
+
+Example: `markdown-notes-tree --linkToSubdirectoryReadme`
+
+### `--noSubdirectoryTrees`
+
+Don't write `README.md` files to subdirectories. Any existing `README.md` files in subdirectories will be ignored.
+
+Example: `markdown-notes-tree --noSubdirectoryTrees`
+
+### `--notesBeforeDirectories`
+
+If a directory contains both notes and subdirectories, put the notes before the subdirectories in he tree. By default, it's the other way around.
+
+Example: `markdown-notes-tree --notesBeforeDirectories`
+
+### `--orderNotesByTitle`
+
+Order notes in the same (sub)directory by title instead of by filename.
+
+Example: `markdown-notes-tree --orderNotesByTitle`
+
+### `--silent`
+
+Don't log to the console during execution.
+
+Example: `markdown-notes-tree --silent`
+
+### `--subdirectoryDescriptionOnNewLine`
+
+If subdirectory descriptions are provided, put them on a new line in the tree.
+
+Example: `markdown-notes-tree --subdirectoryDescriptionOnNewLine`
+
+### `--useTabs`
+
+Use tabs (instead of the standard four spaces) for indentation.
+
+Example: `markdown-notes-tree --useTabs`
 
 ## Development
 
