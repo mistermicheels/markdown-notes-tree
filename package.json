@@ -23,7 +23,6 @@
     },
     "license": "MIT",
     "devDependencies": {
-        "codecov": "^3.7.1",
         "dedent": "^0.7.0",
         "fs-extra": "^8.1.0",
         "jest": "^26.1.0",
