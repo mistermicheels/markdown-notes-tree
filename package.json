@@ -16,7 +16,13 @@
         "notes",
         "tree",
         "docs",
-        "documentation"
+        "documentation",
+        "toc",
+        "table",
+        "contents",
+        "table of contents",
+        "table-of-contents",
+        "toc-generator"
     ],
     "author": "mistermicheels",
     "repository": {
