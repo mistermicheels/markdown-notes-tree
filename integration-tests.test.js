@@ -211,7 +211,7 @@ describe("markdown-notes-tree", () => {
 
             let contents;
 
-            if (!isDirectory) {
+            if (!isDirectory && name.endsWith(".md")) {
                 contents = fsExtra.readFileSync(fullPath, { encoding: "utf-8" });
             }
 
