@@ -109,7 +109,7 @@ describe("fileContents", () => {
             );
 
             expect(() => fileContents.getTitleFromMarkdownContents(contents)).toThrow(
-                "Title contains content that is not allowed inside a link"
+                "Title cannot contain Markdown links since this would mess up the links in the tree (consider using HTML as a workaround)"
             );
         });
     });

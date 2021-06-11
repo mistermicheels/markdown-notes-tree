@@ -42,9 +42,11 @@ function getTitleFromMarkdownContents(contents) {
         return undefined;
     }
 
-    if (!markdownParser.isContentAllowedInsideLink(titleNode)) {
-        // we always read titles with the goal of turning them into links in the tree
-        throw new Error("Title contains content that is not allowed inside a link");
+    if (markdownParser.hasLinkDescendant(titleNode)) {
+        // links are the only content that can be used inside headings but not inside links
+        throw new Error(
+            "Title cannot contain Markdown links since this would mess up the links in the tree (consider using HTML as a workaround)"
+        );
     }
 
     const contentStartIndex = markdownParser.getContentStartIndex(titleNode);

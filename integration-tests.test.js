@@ -45,13 +45,13 @@ describe("markdown-notes-tree", () => {
         );
     });
 
-    test("it should throw an error if a Markdown file has content in the title that will be invalid inside a link", () => {
-        const folderName = "error-invalid-content-in-title";
+    test("it should throw an error if a Markdown file has a link inside the title", () => {
+        const folderName = "error-link-in-title";
         const resultFolderPath = getTestFolderPath(folderName, "result");
         const invalidFilePath = path.join(resultFolderPath, "sub1", "file1a.md");
 
         expect(() => executeTestScenario(folderName, [])).toThrow(
-            `Cannot get title from file ${invalidFilePath}: Title contains content that is not allowed inside a link`
+            `Cannot get title from file ${invalidFilePath}: Title cannot contain Markdown links since this would mess up the links in the tree (consider using HTML as a workaround)`
         );
     });
 

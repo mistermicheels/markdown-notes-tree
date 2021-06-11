@@ -5,25 +5,13 @@ const mdastUtilFromMarkdown = require("mdast-util-from-markdown");
 module.exports = {
     getAstNodeFromContents,
     getFirstLevel1HeadingChild,
-    isContentAllowedInsideLink,
+    hasLinkDescendant,
     getFirstHtmlChildWithValue,
     getStartIndex,
     getEndIndex,
     getContentStartIndex,
     getContentEndIndex
 };
-
-// allowed types according to mdast spec: Break | Emphasis | HTML | Image | ImageReference | InlineCode | Strong | Text
-const allowedTypesInsideLink = new Set([
-    "break",
-    "emphasis",
-    "html",
-    "image",
-    "imageReference",
-    "inlineCode",
-    "strong",
-    "text"
-]);
 
 const mdastCache = new Map();
 
@@ -46,17 +34,17 @@ function getFirstLevel1HeadingChild(node) {
     return node.children.find(node => node.type === "heading" && node.depth === 1);
 }
 
-function isContentAllowedInsideLink(node) {
+function hasLinkDescendant(node) {
     if (!node.children) {
-        return true;
+        return false;
     }
 
-    return node.children.every(child => {
-        if (!allowedTypesInsideLink.has(child.type)) {
-            return false;
+    return node.children.some(child => {
+        if (child.type === "link") {
+            return true;
         }
 
-        return isContentAllowedInsideLink(child);
+        return hasLinkDescendant(child);
     });
 }
 

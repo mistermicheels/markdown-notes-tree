@@ -27,29 +27,29 @@ describe("markdownParser", () => {
         expect(markdownParser.getContentEndIndex(htmlComment)).toBe(31);
     });
 
-    describe("isContentAllowedInsideLink", () => {
-        test("it allows normal link content", () => {
+    describe("hasLinkDescendant", () => {
+        test("it ignores non-link content", () => {
             const markdown = "# Test";
             const astNode = markdownParser.getAstNodeFromContents(markdown);
             const level1Heading = markdownParser.getFirstLevel1HeadingChild(astNode);
 
-            expect(markdownParser.isContentAllowedInsideLink(level1Heading)).toBe(true);
+            expect(markdownParser.hasLinkDescendant(level1Heading)).toBe(false);
         });
 
-        test("it forbids links", () => {
+        test("it detects links", () => {
             const markdown = "# [mistermicheels](http://mistermicheels.com)";
             const astNode = markdownParser.getAstNodeFromContents(markdown);
             const level1Heading = markdownParser.getFirstLevel1HeadingChild(astNode);
 
-            expect(markdownParser.isContentAllowedInsideLink(level1Heading)).toBe(false);
+            expect(markdownParser.hasLinkDescendant(level1Heading)).toBe(true);
         });
 
-        test("it forbids links nested inside other nodes", () => {
+        test("it detects links nested inside other nodes", () => {
             const markdown = "# **[mistermicheels](http://mistermicheels.com)**";
             const astNode = markdownParser.getAstNodeFromContents(markdown);
             const level1Heading = markdownParser.getFirstLevel1HeadingChild(astNode);
 
-            expect(markdownParser.isContentAllowedInsideLink(level1Heading)).toBe(false);
+            expect(markdownParser.hasLinkDescendant(level1Heading)).toBe(true);
         });
 
         test("it handles nodes without children", () => {
@@ -57,7 +57,7 @@ describe("markdownParser", () => {
             const astNode = markdownParser.getAstNodeFromContents(markdown);
             const level1Heading = markdownParser.getFirstLevel1HeadingChild(astNode);
 
-            expect(markdownParser.isContentAllowedInsideLink(level1Heading)).toBe(true);
+            expect(markdownParser.hasLinkDescendant(level1Heading)).toBe(false);
         });
     });
 });
