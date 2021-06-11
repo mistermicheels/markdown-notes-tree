@@ -1,3 +1,1 @@
-Whoops, no title on the first line!
-
-# Too little, too late
+Whoops, no title in this file!

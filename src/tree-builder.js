@@ -45,10 +45,11 @@ function getTreeNodesForDirectories(directories, relativeParentPath, environment
             const relativePath = path.join(relativeParentPath, directory.name);
             const relativeReadmePath = path.join(relativePath, "README.md");
             const readmeContents = getCurrentContents(relativeReadmePath);
+            const readmeTitle = getTitleFromMarkdownFile(readmeContents, relativeReadmePath);
 
             treeNodes.push({
                 isDirectory: true,
-                title: fileContents.getTitleFromMarkdownContents(readmeContents) || directory.name,
+                title: readmeTitle || directory.name,
                 description: getDescriptionFromDirectoryReadmeContents(
                     readmeContents,
                     relativeReadmePath
@@ -68,10 +69,11 @@ function getTreeNodesForFiles(files, relativeParentPath, environment) {
     for (const file of files) {
         if (!ignores.shouldIgnoreFile(file.name, relativeParentPath, environment)) {
             const relativePath = path.join(relativeParentPath, file.name);
+            const contents = getCurrentContents(relativePath);
 
             treeNodes.push({
                 isDirectory: false,
-                title: getTitleFromMarkdownFileOrThrow(relativePath),
+                title: getTitleFromMarkdownFileOrThrow(contents, relativePath),
                 filename: file.name
             });
         }
@@ -103,9 +105,17 @@ function getDescriptionFromDirectoryReadmeContents(contents, relativePath) {
     }
 }
 
-function getTitleFromMarkdownFileOrThrow(relativePath) {
-    const contents = getCurrentContents(relativePath);
-    const title = fileContents.getTitleFromMarkdownContents(contents);
+function getTitleFromMarkdownFile(contents, relativePath) {
+    try {
+        return fileContents.getTitleFromMarkdownContents(contents);
+    } catch (error) {
+        const absolutePath = pathUtils.getAbsolutePath(relativePath);
+        throw new Error(`Cannot get title from file ${absolutePath}: ${error.message}`);
+    }
+}
+
+function getTitleFromMarkdownFileOrThrow(contents, relativePath) {
+    const title = getTitleFromMarkdownFile(contents, relativePath);
 
     if (!title) {
         const absolutePath = pathUtils.getAbsolutePath(relativePath);

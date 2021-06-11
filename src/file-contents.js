@@ -2,6 +2,8 @@
 
 const frontMatter = require("front-matter");
 
+const markdownParser = require("./markdown-parser");
+
 module.exports = {
     getTitleFromMarkdownContents,
     getNewMainReadmeContents,
@@ -33,17 +35,26 @@ function getTitleFromMarkdownContents(contents) {
     }
 
     const contentsWithoutFrontMatter = parsedFrontMatter.body.trimLeft();
-    const lines = contentsWithoutFrontMatter.split(/\r\n|\r|\n/);
+    const astNode = markdownParser.getAstNodeFromContents(contentsWithoutFrontMatter);
+    const titleNode = markdownParser.getFirstLevel1HeadingChild(astNode);
 
-    for (const line of lines) {
-        if (line.startsWith("# ")) {
-            return line.substring(2);
-        } else if (line !== "" && line !== markers.directoryReadmeStart) {
-            return undefined;
-        }
+    if (!titleNode) {
+        return undefined;
     }
 
-    return undefined;
+    if (!markdownParser.isContentAllowedInsideLink(titleNode)) {
+        // we always read titles with the goal of turning them into links in the tree
+        throw new Error("Title contains content that is not allowed inside a link");
+    }
+
+    const contentStartIndex = markdownParser.getContentStartIndex(titleNode);
+    const contentEndIndex = markdownParser.getContentEndIndex(titleNode);
+
+    if (contentStartIndex === contentEndIndex) {
+        return undefined;
+    }
+
+    return contentsWithoutFrontMatter.substring(contentStartIndex, contentEndIndex);
 }
 
 function getNewMainReadmeContents(currentContents, markdownForTree, environment) {

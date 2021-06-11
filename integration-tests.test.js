@@ -31,7 +31,7 @@ describe("markdown-notes-tree", () => {
         executeTestScenario("default-ignores", []);
     });
 
-    test("it should throw an error if a Markdown file does not start with the title", () => {
+    test("it should throw an error if a Markdown file does not have a title", () => {
         const folderName = "error-no-title";
         const resultFolderPath = getTestFolderPath(folderName, "result");
         const invalidFilePath = path.join(resultFolderPath, "sub1", "file1a.md");
