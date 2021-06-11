@@ -95,14 +95,8 @@ function normalizeContents(contents) {
         .trimLeft();
 }
 
-function getNewDirectoryReadmeContents(name, currentContents, markdownForTree, environment) {
-    currentContents = normalizeContents(currentContents);
-
-    const currentTitle = getTitleFromMarkdownContents(currentContents);
-    const title = currentTitle || name;
-    const titleLine = `# ${title}`;
-
-    const description = getDirectoryDescriptionFromCurrentContents(currentContents);
+function getNewDirectoryReadmeContents(title, description, markdownForTree, environment) {
+    const titleHeading = `# ${title}`;
 
     let partBetweenDescriptionMarkers = environment.endOfLine.repeat(2);
 
@@ -114,7 +108,7 @@ function getNewDirectoryReadmeContents(name, currentContents, markdownForTree, e
     return (
         markers.directoryReadmeStart +
         environment.endOfLine.repeat(2) +
-        titleLine +
+        titleHeading +
         environment.endOfLine.repeat(2) +
         markers.directoryReadmeDescriptionStart +
         partBetweenDescriptionMarkers +
