@@ -27,6 +27,10 @@ describe("markdown-notes-tree", () => {
         executeTestScenario("content-after-main-tree", []);
     });
 
+    test("it should allow content before the title of a note", () => {
+        executeTestScenario("content-before-note-title", []);
+    });
+
     test("it should ignore non-relevant files and folders", () => {
         executeTestScenario("default-ignores", []);
     });
@@ -38,6 +42,16 @@ describe("markdown-notes-tree", () => {
 
         expect(() => executeTestScenario(folderName, [])).toThrow(
             `No title found for Markdown file ${invalidFilePath}`
+        );
+    });
+
+    test("it should throw an error if a Markdown file has content in the title that will be invalid inside a link", () => {
+        const folderName = "error-invalid-content-in-title";
+        const resultFolderPath = getTestFolderPath(folderName, "result");
+        const invalidFilePath = path.join(resultFolderPath, "sub1", "file1a.md");
+
+        expect(() => executeTestScenario(folderName, [])).toThrow(
+            `Cannot get title from file ${invalidFilePath}: Title contains content that is not allowed inside a link`
         );
     });
 
@@ -106,6 +120,10 @@ describe("markdown-notes-tree", () => {
         executeTestScenario("note-title-front-matter", []);
     });
 
+    test("it should allow rich text in note titles", () => {
+        executeTestScenario("note-title-rich-text", []);
+    });
+
     test("it should allow putting notes before directories", () => {
         executeTestScenario("notes-before-directories", ["--notesBeforeDirectories"]);
     });
@@ -132,6 +150,10 @@ describe("markdown-notes-tree", () => {
 
     test("it should use and preserve custom subdirectory titles if provided", () => {
         executeTestScenario("subdirectory-title", []);
+    });
+
+    test("it should allow rich text in custom subdirectory titles", () => {
+        executeTestScenario("subdirectory-title-rich-text", []);
     });
 
     test("it should allow using tabs for indentation", () => {
