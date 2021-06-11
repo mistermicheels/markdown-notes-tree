@@ -2,8 +2,6 @@
 
 # sub1
 
-<!-- optional markdown-notes-tree directory description s
-
 <!-- optional markdown-notes-tree directory description ends here -->
 
 - [**sub1a**](sub1a)

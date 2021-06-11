@@ -59,33 +59,30 @@ function getTitleFromMarkdownContents(contents) {
 
 function getNewMainReadmeContents(currentContents, markdownForTree, environment) {
     currentContents = normalizeContents(currentContents);
+    const astNode = markdownParser.getAstNodeFromContents(currentContents);
 
-    const indexTreeStartMarker = currentContents.indexOf(markers.mainReadmeTreeStart);
-    const treeStartMarkerPresent = indexTreeStartMarker >= 0;
-    let contentsBeforeTree;
+    const treeStartMarkerNode = markdownParser.getFirstHtmlChildWithValue(
+        markers.mainReadmeTreeStart,
+        astNode
+    );
 
-    if (treeStartMarkerPresent) {
-        contentsBeforeTree = currentContents.substring(0, indexTreeStartMarker);
-    } else {
-        contentsBeforeTree = currentContents + environment.endOfLine.repeat(2);
-    }
+    const treeEndMarkerNode = markdownParser.getFirstHtmlChildWithValue(
+        markers.mainReadmeTreeEnd,
+        astNode
+    );
 
-    const indexTreeEndMarker = currentContents.indexOf(markers.mainReadmeTreeEnd);
-    const treeEndMarkerPresent = indexTreeEndMarker >= 0;
-    let contentsAfterTree;
+    const contentsBeforeTree = getMainReadmeContentsBeforeTree(
+        currentContents,
+        treeStartMarkerNode,
+        environment
+    );
 
-    const treeEndMarkerValid =
-        treeEndMarkerPresent && treeStartMarkerPresent && indexTreeEndMarker > indexTreeStartMarker;
-
-    if (treeEndMarkerValid) {
-        contentsAfterTree = currentContents.substring(
-            indexTreeEndMarker + markers.mainReadmeTreeEnd.length
-        );
-    } else if (treeEndMarkerPresent) {
-        throw new Error("Invalid file structure: tree end marker found before tree start marker");
-    } else {
-        contentsAfterTree = environment.endOfLine;
-    }
+    const contentsAfterTree = getMainReadmeContentsAfterTree(
+        currentContents,
+        treeStartMarkerNode,
+        treeEndMarkerNode,
+        environment
+    );
 
     return (
         contentsBeforeTree +
@@ -98,12 +95,43 @@ function getNewMainReadmeContents(currentContents, markdownForTree, environment)
     );
 }
 
+function getMainReadmeContentsBeforeTree(contents, treeStartMarkerNode, environment) {
+    if (!treeStartMarkerNode) {
+        return contents + environment.endOfLine.repeat(2);
+    }
+
+    const indexTreeStartMarker = markdownParser.getStartIndex(treeStartMarkerNode);
+    return contents.substring(0, indexTreeStartMarker);
+}
+
+function getMainReadmeContentsAfterTree(
+    contents,
+    treeStartMarkerNode,
+    treeEndMarkerNode,
+    environment
+) {
+    if (!treeEndMarkerNode) {
+        return environment.endOfLine;
+    }
+
+    const treeEndMarkerValid =
+        treeStartMarkerNode &&
+        markdownParser.getStartIndex(treeEndMarkerNode) >
+            markdownParser.getStartIndex(treeStartMarkerNode);
+
+    if (!treeEndMarkerValid) {
+        throw new Error("Invalid file structure: tree end marker found before tree start marker");
+    }
+
+    const indexEndOfTreeEndMarker = markdownParser.getEndIndex(treeEndMarkerNode);
+    return contents.substring(indexEndOfTreeEndMarker);
+}
+
 function normalizeContents(contents) {
     return contents
         .replace(markers.mainReadmeTreeStart_v_1_8_0, markers.mainReadmeTreeStart)
         .replace(markers.mainReadmeTreeEnd_v_1_8_0, markers.mainReadmeTreeEnd)
-        .replace(markers.directoryReadmeStart_v_1_8_0, markers.directoryReadmeStart)
-        .trimLeft();
+        .replace(markers.directoryReadmeStart_v_1_8_0, markers.directoryReadmeStart);
 }
 
 function getNewDirectoryReadmeContents(title, description, markdownForTree, environment) {
@@ -131,25 +159,34 @@ function getNewDirectoryReadmeContents(title, description, markdownForTree, envi
 }
 
 function getDirectoryDescriptionFromCurrentContents(currentContents) {
-    const indexStartMarker = currentContents.indexOf(markers.directoryReadmeDescriptionStart);
-    const indexEndMarker = currentContents.indexOf(markers.directoryReadmeDescriptionEnd);
+    const astNode = markdownParser.getAstNodeFromContents(currentContents);
 
-    const startMarkerPresent = indexStartMarker >= 0;
-    const endMarkerPresent = indexEndMarker >= 0;
+    const startMarkerNode = markdownParser.getFirstHtmlChildWithValue(
+        markers.directoryReadmeDescriptionStart,
+        astNode
+    );
+
+    const endMarkerNode = markdownParser.getFirstHtmlChildWithValue(
+        markers.directoryReadmeDescriptionEnd,
+        astNode
+    );
+
+    if (!startMarkerNode && !endMarkerNode) {
+        return "";
+    }
 
     const markersValid =
-        startMarkerPresent && endMarkerPresent && indexEndMarker > indexStartMarker;
+        startMarkerNode &&
+        endMarkerNode &&
+        markdownParser.getStartIndex(endMarkerNode) > markdownParser.getStartIndex(startMarkerNode);
 
     if (markersValid) {
-        const descriptionStart = indexStartMarker + markers.directoryReadmeDescriptionStart.length;
-        const descriptionEnd = indexEndMarker;
-
+        const descriptionStart = markdownParser.getEndIndex(startMarkerNode);
+        const descriptionEnd = markdownParser.getStartIndex(endMarkerNode);
         return currentContents.substring(descriptionStart, descriptionEnd).trim();
-    } else if (startMarkerPresent || endMarkerPresent) {
+    } else {
         throw new Error(
             "Invalid file structure: only one description marker found or end marker found before start marker"
         );
-    } else {
-        return "";
     }
 }
