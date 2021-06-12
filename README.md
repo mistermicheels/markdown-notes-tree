@@ -39,7 +39,7 @@ You can customize this using the `--ignore` and `--includeAllDirectoriesByDefaul
 
 ## Note titles from YAML front matter
 
-Normally, the tool expects to find the note's title as a level 1 Markdown heading on the first line of the file (potentially after some YAML front matter).
+Normally, the tool expects to find the note's title as the first level 1 Markdown heading in the file.
 
 However, if a note starts with YAML front matter that has a `tree_title` attribute, the value of `tree_title` will be used as the note's title in the tree.
 
