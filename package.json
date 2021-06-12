@@ -46,6 +46,7 @@
     },
     "files": [
         "cli.js",
-        "src"
+        "src",
+        "!src/*.spec.js"
     ]
 }
