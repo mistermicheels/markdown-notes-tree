@@ -86,4 +86,18 @@ describe("markdownParser", () => {
             expect(markdownParser.removeStrongFromMarkdown(input)).toBe(expected);
         });
     });
+
+    describe("escapeText", () => {
+        test("it doesn't change normal text", () => {
+            const input = "Well, what are you looking at?";
+            const expected = "Well, what are you looking at?";
+            expect(markdownParser.escapeText(input)).toBe(expected);
+        });
+
+        test("it escapes Markdown special characters", () => {
+            const input = "> Well, _what_ **are** *you* looking __at__?";
+            const expected = "\\> Well, \\_what\\_ \\*\\*are\\*\\* \\*you\\* looking \\__at\\_\\_?";
+            expect(markdownParser.escapeText(input)).toBe(expected);
+        });
+    });
 });

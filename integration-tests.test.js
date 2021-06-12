@@ -148,6 +148,12 @@ describe("markdown-notes-tree", () => {
         ]);
     });
 
+    test("it should handle Markdown syntax in subdirectory names", () => {
+        executeTestScenario("subdirectory-name-markdown-syntax", [
+            "--includeAllDirectoriesByDefault"
+        ]);
+    });
+
     test("it should use and preserve custom subdirectory titles if provided", () => {
         executeTestScenario("subdirectory-title", []);
     });

@@ -7,6 +7,7 @@ const pathUtils = require("./path-utils");
 const stringUtils = require("./string-utils");
 const ignores = require("./ignores");
 const fileContents = require("./file-contents");
+const markdownParser = require("./markdown-parser");
 
 module.exports = { buildTree };
 
@@ -49,7 +50,7 @@ function getTreeNodesForDirectories(directories, relativeParentPath, environment
 
             treeNodes.push({
                 isDirectory: true,
-                title: readmeTitle || directory.name,
+                title: readmeTitle || markdownParser.escapeText(directory.name),
                 description: getDescriptionFromDirectoryReadmeContents(
                     readmeContents,
                     relativeReadmePath

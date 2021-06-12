@@ -12,7 +12,9 @@ module.exports = {
     getEndIndex,
     getContentStartIndex,
     getContentEndIndex,
-    removeStrongFromMarkdown
+    removeStrongFromMarkdown,
+    escapeText,
+    generateLinkFromMarkdownAndUrl
 };
 
 const mdastCache = new Map();
@@ -113,4 +115,54 @@ function replaceStrongNodesByChildrenDeep(nodes) {
     }
 
     return newNodes;
+}
+
+function escapeText(text) {
+    const generated = {
+        type: "root",
+        children: [
+            {
+                type: "paragraph",
+                children: [
+                    {
+                        type: "text",
+                        value: text
+                    }
+                ]
+            }
+        ]
+    };
+
+    return mdastUtilToMarkdown(generated).trim();
+}
+
+function generateLinkFromMarkdownAndUrl(markdown, url) {
+    const node = getAstNodeFromMarkdown(markdown);
+    const paragraphNode = node.children[0];
+
+    const generated = {
+        type: "root",
+        children: [
+            {
+                type: "paragraph",
+                children: [
+                    {
+                        type: "link",
+                        url: url,
+                        children: paragraphNode.children.map(markAsGenerated)
+                    }
+                ]
+            }
+        ]
+    };
+
+    return mdastUtilToMarkdown(generated).trim();
+}
+
+function markAsGenerated(node) {
+    return {
+        ...node,
+        position: undefined, // position must not be defined for generated/altered node
+        children: node.children ? node.children.map(markAsGenerated) : undefined
+    };
 }
