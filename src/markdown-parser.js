@@ -1,6 +1,7 @@
 "use strict";
 
 const mdastUtilFromMarkdown = require("mdast-util-from-markdown");
+const mdastUtilToMarkdown = require("mdast-util-to-markdown");
 
 module.exports = {
     getAstNodeFromMarkdown,
@@ -10,7 +11,8 @@ module.exports = {
     getStartIndex,
     getEndIndex,
     getContentStartIndex,
-    getContentEndIndex
+    getContentEndIndex,
+    removeStrongFromMarkdown
 };
 
 const mdastCache = new Map();
@@ -80,4 +82,31 @@ function getContentEndIndex(node) {
 
     const lastChild = node.children[node.children.length - 1];
     return getEndIndex(lastChild);
+}
+
+/**
+ * Note: this might alter other Markdown formatting (for example, * vs _ for emphasis)
+ */
+function removeStrongFromMarkdown(markdown) {
+    const node = getAstNodeFromMarkdown(markdown);
+    const nodeWithoutStrong = replaceStrongDescendantsByChildren(node);
+    return mdastUtilToMarkdown(nodeWithoutStrong).trim();
+}
+
+function replaceStrongDescendantsByChildren(node) {
+    return {
+        ...node,
+        position: undefined, // position must not be defined for generated/altered node
+        children: node.children ? replaceStrongNodesByChildrenDeep(node.children) : undefined
+    };
+}
+
+function replaceStrongNodesByChildrenDeep(nodes) {
+    return nodes.flatMap(node => {
+        if (node.type === "strong") {
+            return replaceStrongNodesByChildrenDeep(node.children);
+        } else {
+            return replaceStrongDescendantsByChildren(node);
+        }
+    });
 }

@@ -60,4 +60,30 @@ describe("markdownParser", () => {
             expect(markdownParser.hasLinkDescendant(level1Heading)).toBe(false);
         });
     });
+
+    describe("removeStrongFromMarkdown", () => {
+        test("it removes strong content at the top", () => {
+            const input = "**Look at me, I'm strong**";
+            const expected = "Look at me, I'm strong";
+            expect(markdownParser.removeStrongFromMarkdown(input)).toBe(expected);
+        });
+
+        test("it removes strong content inside other content", () => {
+            const input = "> Look at **me**, I'm **strong**";
+            const expected = "> Look at me, I'm strong";
+            expect(markdownParser.removeStrongFromMarkdown(input)).toBe(expected);
+        });
+
+        test("it removes nested strong content", () => {
+            const input = "**Look at **me**, I'm **strong****";
+            const expected = "Look at me, I'm strong";
+            expect(markdownParser.removeStrongFromMarkdown(input)).toBe(expected);
+        });
+
+        test("it ignores non-strong content", () => {
+            const input = "*This* doesn't look `very strong`";
+            const expected = "*This* doesn't look `very strong`";
+            expect(markdownParser.removeStrongFromMarkdown(input)).toBe(expected);
+        });
+    });
 });
