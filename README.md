@@ -113,9 +113,10 @@ Example: `markdown-notes-tree --useTabs`
 
 ## Known limitations
 
-The tool does not support Markdown links inside the titles of notes and subdirectory README files. This is intentional, because these titles will be turned into links by the tool and Markdown does not support nested links.
-
-As a workaround, HTML links can be used ([example](test-data/subdirectory-title-rich-text/expected/sub2/sub2b/README.md)).
+-   The tool does not support Markdown links inside the titles of notes and subdirectory README files
+    -   This is intentional, because these titles will be turned into links by the tool and Markdown does not support nested links
+    -   As a workaround, HTML links can be used ([example](test-data/subdirectory-title-rich-text/expected/sub2/sub2b/README.md))
+-   Subdirectory descriptions can only be a single paragraph, nothing more
 
 ## Development
 

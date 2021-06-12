@@ -13,6 +13,7 @@ module.exports = {
     getEndIndex,
     getContentStartIndex,
     getContentEndIndex,
+    isSingleMarkdownParagraph,
     removeStrongFromMarkdown,
     escapeText,
     generateLinkFromMarkdownAndUrl
@@ -90,6 +91,11 @@ function getContentEndIndex(node) {
 
     const lastChild = node.children[node.children.length - 1];
     return getEndIndex(lastChild);
+}
+
+function isSingleMarkdownParagraph(markdown) {
+    const node = getAstNodeFromMarkdown(markdown);
+    return node.children.length === 1 && node.children[0].type === "paragraph";
 }
 
 /**

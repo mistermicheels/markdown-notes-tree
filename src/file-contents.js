@@ -206,7 +206,13 @@ function getDirectoryDescriptionFromCurrentContents(currentContents) {
     if (markersValid) {
         const descriptionStart = markdownParser.getEndIndex(startMarkerNode);
         const descriptionEnd = markdownParser.getStartIndex(endMarkerNode);
-        return currentContents.substring(descriptionStart, descriptionEnd).trim();
+        const description = currentContents.substring(descriptionStart, descriptionEnd).trim();
+
+        if (description && !markdownParser.isSingleMarkdownParagraph(description)) {
+            throw new Error("Subdirectory description should be just a single paragraph");
+        }
+
+        return description;
     } else {
         throw new Error(
             "Invalid file structure: only one description marker found or end marker found before start marker"
