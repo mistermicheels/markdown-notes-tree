@@ -13,10 +13,12 @@ module.exports = {
     getEndIndex,
     getContentStartIndex,
     getContentEndIndex,
+    extractParagraphFromHeadingNode,
     isSingleMarkdownParagraph,
     removeStrongFromMarkdown,
     escapeText,
-    generateLinkFromMarkdownParagraphAndUrl
+    generateLinkFromMarkdownParagraphAndUrl,
+    generateStrongParagraphFromMarkdownParagraph
 };
 
 const mdastCache = new Map();
@@ -93,6 +95,20 @@ function getContentEndIndex(node) {
     return getEndIndex(lastChild);
 }
 
+function extractParagraphFromHeadingNode(node) {
+    const extracted = {
+        type: "root",
+        children: [
+            {
+                type: "paragraph",
+                children: node.children.map(markAsGenerated)
+            }
+        ]
+    };
+
+    return mdastUtilToMarkdown(extracted).trim();
+}
+
 function isSingleMarkdownParagraph(markdown) {
     const node = getAstNodeFromMarkdown(markdown);
     return node.children.length === 1 && node.children[0].type === "paragraph";
@@ -165,6 +181,32 @@ function generateLinkFromMarkdownParagraphAndUrl(markdown, url) {
                     {
                         type: "link",
                         url: url,
+                        children: paragraphNode.children.map(markAsGenerated)
+                    }
+                ]
+            }
+        ]
+    };
+
+    return mdastUtilToMarkdown(generated).trim();
+}
+
+function generateStrongParagraphFromMarkdownParagraph(markdown) {
+    if (!isSingleMarkdownParagraph(markdown)) {
+        throw new Error("Link text must be a single paragraph");
+    }
+
+    const node = getAstNodeFromMarkdown(markdown);
+    const paragraphNode = node.children[0];
+
+    const generated = {
+        type: "root",
+        children: [
+            {
+                type: "paragraph",
+                children: [
+                    {
+                        type: "strong",
                         children: paragraphNode.children.map(markAsGenerated)
                     }
                 ]

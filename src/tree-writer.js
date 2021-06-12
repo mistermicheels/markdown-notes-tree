@@ -35,7 +35,6 @@ function writeTreesForDirectories(mainTree, environment) {
             writeTreesForDirectory(
                 [treeNode.filename],
                 treeNode.titleParagraph,
-                treeNode.descriptionParagraph,
                 treeNode.children,
                 environment
             );
@@ -43,27 +42,14 @@ function writeTreesForDirectories(mainTree, environment) {
     }
 }
 
-function writeTreesForDirectory(
-    pathParts,
-    titleParagraph,
-    descriptionParagraph,
-    treeForDirectory,
-    environment
-) {
-    writeTreeToDirectoryReadme(
-        pathParts,
-        titleParagraph,
-        descriptionParagraph,
-        treeForDirectory,
-        environment
-    );
+function writeTreesForDirectory(pathParts, titleParagraph, treeForDirectory, environment) {
+    writeTreeToDirectoryReadme(pathParts, titleParagraph, treeForDirectory, environment);
 
     for (const treeNode of treeForDirectory) {
         if (treeNode.isDirectory) {
             writeTreesForDirectory(
                 [...pathParts, treeNode.filename],
                 treeNode.titleParagraph,
-                treeNode.descriptionParagraph,
                 treeNode.children,
                 environment
             );
@@ -71,13 +57,7 @@ function writeTreesForDirectory(
     }
 }
 
-function writeTreeToDirectoryReadme(
-    pathParts,
-    titleParagraph,
-    descriptionParagraph,
-    treeForDirectory,
-    environment
-) {
+function writeTreeToDirectoryReadme(pathParts, titleParagraph, treeForDirectory, environment) {
     const filePathParts = [...pathParts, "README.md"];
     const relativeFilePath = path.join(...filePathParts);
     const absoluteFilePath = pathUtils.getAbsolutePath(relativeFilePath);
@@ -92,7 +72,7 @@ function writeTreeToDirectoryReadme(
 
     const newContents = fileContents.getNewDirectoryReadmeContents(
         titleParagraph,
-        descriptionParagraph,
+        currentContents,
         markdownForTree,
         environment
     );

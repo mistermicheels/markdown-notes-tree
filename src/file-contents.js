@@ -55,15 +55,7 @@ function getTitleParagraphFromContents(contents) {
         );
     }
 
-    const titleContentStartIndex = markdownParser.getContentStartIndex(titleNode);
-    const titleContentEndIndex = markdownParser.getContentEndIndex(titleNode);
-
-    if (titleContentStartIndex === titleContentEndIndex) {
-        return undefined;
-    }
-
-    // content model for heading is identical to content model for paragraph, so extracting its content gives us a paragraph
-    return contentsWithoutFrontMatter.substring(titleContentStartIndex, titleContentEndIndex);
+    return markdownParser.extractParagraphFromHeadingNode(titleNode);
 }
 
 function getNewMainReadmeContents(currentContents, markdownForTree, environment) {
@@ -160,30 +152,39 @@ function normalizeContents(contents) {
 
 function getNewDirectoryReadmeContents(
     titleParagraph,
-    descriptionParagraph,
+    currentContents,
     markdownForTree,
     environment
 ) {
-    // this should be safe to do (heading content model is same as paragraph content model) and retains user formatting
-    const titleHeading = `# ${titleParagraph}`;
+    currentContents = normalizeContents(currentContents);
+    const astNode = markdownParser.getAstNodeFromMarkdown(currentContents);
 
-    let partBetweenDescriptionMarkers = environment.endOfLine.repeat(2);
+    const descriptionEndMarkerNode = markdownParser.getFirstHtmlChildWithValue(
+        markers.directoryReadmeDescriptionEnd,
+        astNode
+    );
 
-    if (descriptionParagraph) {
-        partBetweenDescriptionMarkers =
+    let contentsUntilEndOfMarkers;
+
+    if (descriptionEndMarkerNode) {
+        const indexEndOfDescriptionEndMarker = markdownParser.getEndIndex(descriptionEndMarkerNode);
+        contentsUntilEndOfMarkers = currentContents.substring(0, indexEndOfDescriptionEndMarker);
+    } else {
+        // this should be safe to do (heading content model is same as paragraph content model) and retains user formatting
+        const titleHeading = `# ${titleParagraph}`;
+
+        contentsUntilEndOfMarkers =
+            markers.directoryReadmeStart +
             environment.endOfLine.repeat(2) +
-            descriptionParagraph +
-            environment.endOfLine.repeat(2);
+            titleHeading +
+            environment.endOfLine.repeat(2) +
+            markers.directoryReadmeDescriptionStart +
+            environment.endOfLine.repeat(2) +
+            markers.directoryReadmeDescriptionEnd;
     }
 
     return (
-        markers.directoryReadmeStart +
-        environment.endOfLine.repeat(2) +
-        titleHeading +
-        environment.endOfLine.repeat(2) +
-        markers.directoryReadmeDescriptionStart +
-        partBetweenDescriptionMarkers +
-        markers.directoryReadmeDescriptionEnd +
+        contentsUntilEndOfMarkers +
         environment.endOfLine.repeat(2) +
         markdownForTree +
         environment.endOfLine

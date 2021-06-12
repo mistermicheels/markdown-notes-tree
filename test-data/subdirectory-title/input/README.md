@@ -10,7 +10,7 @@ This is some basic content.
         - [Title for file1a1](sub1/sub1a/file1a1.md)
     - [Title for file1a](sub1/file1a.md)
     - [Title for file1b](sub1/file1b.md)
-- [**Custom title sub2**](sub2)
+- [**\* Custom title sub2**](sub2)
     - [**Custom title sub2a**](sub2/sub2a)
         - [Title for file2a1](sub2/sub2a/file2a1.md)
         - [Title for file2a2](sub2/sub2a/file2a2.md)
