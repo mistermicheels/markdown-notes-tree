@@ -154,6 +154,10 @@ describe("markdown-notes-tree", () => {
         ]);
     });
 
+    test("it should preserve content in directory README files before description markers", () => {
+        executeTestScenario("subdirectory-readme-extra-content", []);
+    });
+
     test("it should use and preserve custom subdirectory titles if provided", () => {
         executeTestScenario("subdirectory-title", []);
     });

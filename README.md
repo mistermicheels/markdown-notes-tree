@@ -51,6 +51,10 @@ The generated `README.md` files for subdirectories provide some space to add a d
 
 By default, the generated `README.md` files for subdirectories use the subdirectory's name as title. If you change this into a custom title, that custom title will be preserved and it will be used in the tree instead of the name of the subdirectory.
 
+## Extra content in subdirectory README
+
+If you add content to the generated `README.md` files for subdirectories before the description markers, that content will be preserved. This could be useful for image headers etc.
+
 ## Command line arguments
 
 ### `--ignore`
