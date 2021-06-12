@@ -71,6 +71,19 @@ describe("fileContents", () => {
             expect(fileContents.getTitleParagraphFromContents(contents)).toBe("TreeTitle");
         });
 
+        test("it should escape Markdown syntax in title from YAML front matter", () => {
+            const contents = dedent(
+                `---
+                tree_title: _TreeTitle_
+                ---
+                
+                # test
+                second line`
+            );
+
+            expect(fileContents.getTitleParagraphFromContents(contents)).toBe("\\_TreeTitle\\_");
+        });
+
         test("it should ignore YAML front matter that has no tree_title attribute", () => {
             const contents = dedent(
                 `---

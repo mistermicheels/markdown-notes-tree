@@ -37,7 +37,7 @@ function getTitleParagraphFromContents(contents) {
     const titleFromFrontMatter = parsedFrontMatter.attributes.tree_title;
 
     if (titleFromFrontMatter) {
-        return titleFromFrontMatter;
+        return markdownParser.escapeText(titleFromFrontMatter);
     }
 
     const contentsWithoutFrontMatter = parsedFrontMatter.body.trimLeft();
