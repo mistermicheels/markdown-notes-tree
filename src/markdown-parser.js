@@ -8,6 +8,7 @@ module.exports = {
     getFirstLevel1HeadingChild,
     hasLinkDescendant,
     getFirstHtmlChildWithValue,
+    getAllHtmlChildrenWithValues,
     getStartIndex,
     getEndIndex,
     getContentStartIndex,
@@ -53,11 +54,16 @@ function hasLinkDescendant(node) {
 }
 
 function getFirstHtmlChildWithValue(value, node) {
+    const allHtmlChildrenWithValue = getAllHtmlChildrenWithValues([value], node);
+    return allHtmlChildrenWithValue[0];
+}
+
+function getAllHtmlChildrenWithValues(values, node) {
     if (!node.children) {
-        return undefined;
+        return [];
     }
 
-    return node.children.find(node => node.type === "html" && node.value === value);
+    return node.children.filter(node => node.type === "html" && values.includes(node.value));
 }
 
 function getStartIndex(node) {

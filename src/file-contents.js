@@ -24,6 +24,12 @@ const markers = {
     directoryReadmeStart_v_1_8_0: "<!-- this entire file is auto-generated -->"
 };
 
+const legacyToNewMarkersMapping = {
+    [markers.mainReadmeTreeStart_v_1_8_0]: markers.mainReadmeTreeStart,
+    [markers.mainReadmeTreeEnd_v_1_8_0]: markers.mainReadmeTreeEnd,
+    [markers.directoryReadmeStart_v_1_8_0]: markers.directoryReadmeStart
+};
+
 function getTitleFromMarkdownContents(contents) {
     contents = normalizeContents(contents);
 
@@ -130,10 +136,25 @@ function getMainReadmeContentsAfterTree(
 }
 
 function normalizeContents(contents) {
-    return contents
-        .replace(markers.mainReadmeTreeStart_v_1_8_0, markers.mainReadmeTreeStart)
-        .replace(markers.mainReadmeTreeEnd_v_1_8_0, markers.mainReadmeTreeEnd)
-        .replace(markers.directoryReadmeStart_v_1_8_0, markers.directoryReadmeStart);
+    const astNode = markdownParser.getAstNodeFromMarkdown(contents);
+    const legacyMarkers = Object.keys(legacyToNewMarkersMapping);
+    const legacyMarkerNodes = markdownParser.getAllHtmlChildrenWithValues(legacyMarkers, astNode);
+
+    let adjustedContents = contents;
+
+    // start edits from end of string so earlier edits don't interfere with later ones
+    for (const legacyMarkerNode of legacyMarkerNodes.reverse()) {
+        const markerStart = markdownParser.getStartIndex(legacyMarkerNode);
+        const markerEnd = markdownParser.getEndIndex(legacyMarkerNode);
+        const marker = adjustedContents.substring(markerStart, markerEnd);
+        const newMarker = legacyToNewMarkersMapping[marker];
+
+        const beforeMarker = adjustedContents.substring(0, markerStart);
+        const afterMarker = adjustedContents.substring(markerEnd);
+        adjustedContents = beforeMarker + newMarker + afterMarker;
+    }
+
+    return adjustedContents;
 }
 
 function getNewDirectoryReadmeContents(title, description, markdownForTree, environment) {
