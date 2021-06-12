@@ -102,11 +102,15 @@ function replaceStrongDescendantsByChildren(node) {
 }
 
 function replaceStrongNodesByChildrenDeep(nodes) {
-    return nodes.flatMap(node => {
+    const newNodes = [];
+
+    for (const node of nodes) {
         if (node.type === "strong") {
-            return replaceStrongNodesByChildrenDeep(node.children);
+            newNodes.push(...replaceStrongNodesByChildrenDeep(node.children));
         } else {
-            return replaceStrongDescendantsByChildren(node);
+            newNodes.push(replaceStrongDescendantsByChildren(node));
         }
-    });
+    }
+
+    return newNodes;
 }
