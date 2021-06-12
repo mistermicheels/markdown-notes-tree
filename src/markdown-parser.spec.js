@@ -3,7 +3,7 @@ const markdownParser = require("./markdown-parser");
 describe("markdownParser", () => {
     test("it can find level 1 headings", () => {
         const markdown = "# Test";
-        const astNode = markdownParser.getAstNodeFromContents(markdown);
+        const astNode = markdownParser.getAstNodeFromMarkdown(markdown);
         const level1Heading = markdownParser.getFirstLevel1HeadingChild(astNode);
 
         expect(markdownParser.getStartIndex(level1Heading)).toBe(0);
@@ -14,7 +14,7 @@ describe("markdownParser", () => {
 
     test("it can find HTML comments", () => {
         const markdown = "# Test\n<!-- this was a test -->";
-        const astNode = markdownParser.getAstNodeFromContents(markdown);
+        const astNode = markdownParser.getAstNodeFromMarkdown(markdown);
 
         const htmlComment = markdownParser.getFirstHtmlChildWithValue(
             "<!-- this was a test -->",
@@ -30,7 +30,7 @@ describe("markdownParser", () => {
     describe("hasLinkDescendant", () => {
         test("it ignores non-link content", () => {
             const markdown = "# Test";
-            const astNode = markdownParser.getAstNodeFromContents(markdown);
+            const astNode = markdownParser.getAstNodeFromMarkdown(markdown);
             const level1Heading = markdownParser.getFirstLevel1HeadingChild(astNode);
 
             expect(markdownParser.hasLinkDescendant(level1Heading)).toBe(false);
@@ -38,7 +38,7 @@ describe("markdownParser", () => {
 
         test("it detects links", () => {
             const markdown = "# [mistermicheels](http://mistermicheels.com)";
-            const astNode = markdownParser.getAstNodeFromContents(markdown);
+            const astNode = markdownParser.getAstNodeFromMarkdown(markdown);
             const level1Heading = markdownParser.getFirstLevel1HeadingChild(astNode);
 
             expect(markdownParser.hasLinkDescendant(level1Heading)).toBe(true);
@@ -46,7 +46,7 @@ describe("markdownParser", () => {
 
         test("it detects links nested inside other nodes", () => {
             const markdown = "# **[mistermicheels](http://mistermicheels.com)**";
-            const astNode = markdownParser.getAstNodeFromContents(markdown);
+            const astNode = markdownParser.getAstNodeFromMarkdown(markdown);
             const level1Heading = markdownParser.getFirstLevel1HeadingChild(astNode);
 
             expect(markdownParser.hasLinkDescendant(level1Heading)).toBe(true);
@@ -54,7 +54,7 @@ describe("markdownParser", () => {
 
         test("it handles nodes without children", () => {
             const markdown = "# ";
-            const astNode = markdownParser.getAstNodeFromContents(markdown);
+            const astNode = markdownParser.getAstNodeFromMarkdown(markdown);
             const level1Heading = markdownParser.getFirstLevel1HeadingChild(astNode);
 
             expect(markdownParser.hasLinkDescendant(level1Heading)).toBe(false);

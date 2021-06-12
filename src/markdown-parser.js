@@ -3,7 +3,7 @@
 const mdastUtilFromMarkdown = require("mdast-util-from-markdown");
 
 module.exports = {
-    getAstNodeFromContents,
+    getAstNodeFromMarkdown,
     getFirstLevel1HeadingChild,
     hasLinkDescendant,
     getFirstHtmlChildWithValue,
@@ -15,7 +15,7 @@ module.exports = {
 
 const mdastCache = new Map();
 
-function getAstNodeFromContents(contents) {
+function getAstNodeFromMarkdown(contents) {
     if (mdastCache.has(contents)) {
         return mdastCache.get(contents);
     }

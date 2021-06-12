@@ -35,7 +35,7 @@ function getTitleFromMarkdownContents(contents) {
     }
 
     const contentsWithoutFrontMatter = parsedFrontMatter.body.trimLeft();
-    const astNode = markdownParser.getAstNodeFromContents(contentsWithoutFrontMatter);
+    const astNode = markdownParser.getAstNodeFromMarkdown(contentsWithoutFrontMatter);
     const titleNode = markdownParser.getFirstLevel1HeadingChild(astNode);
 
     if (!titleNode) {
@@ -61,7 +61,7 @@ function getTitleFromMarkdownContents(contents) {
 
 function getNewMainReadmeContents(currentContents, markdownForTree, environment) {
     currentContents = normalizeContents(currentContents);
-    const astNode = markdownParser.getAstNodeFromContents(currentContents);
+    const astNode = markdownParser.getAstNodeFromMarkdown(currentContents);
 
     const treeStartMarkerNode = markdownParser.getFirstHtmlChildWithValue(
         markers.mainReadmeTreeStart,
@@ -161,7 +161,7 @@ function getNewDirectoryReadmeContents(title, description, markdownForTree, envi
 }
 
 function getDirectoryDescriptionFromCurrentContents(currentContents) {
-    const astNode = markdownParser.getAstNodeFromContents(currentContents);
+    const astNode = markdownParser.getAstNodeFromMarkdown(currentContents);
 
     const startMarkerNode = markdownParser.getFirstHtmlChildWithValue(
         markers.directoryReadmeDescriptionStart,
