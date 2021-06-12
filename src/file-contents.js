@@ -5,10 +5,10 @@ const frontMatter = require("front-matter");
 const markdownParser = require("./markdown-parser");
 
 module.exports = {
-    getTitleFromMarkdownContents,
+    getTitleParagraphFromContents,
     getNewMainReadmeContents,
     getNewDirectoryReadmeContents,
-    getDirectoryDescriptionFromCurrentContents
+    getDirectoryDescriptionParagraphFromCurrentContents
 };
 
 const markers = {
@@ -30,7 +30,7 @@ const legacyToNewMarkersMapping = {
     [markers.directoryReadmeStart_v_1_8_0]: markers.directoryReadmeStart
 };
 
-function getTitleFromMarkdownContents(contents) {
+function getTitleParagraphFromContents(contents) {
     contents = normalizeContents(contents);
 
     const parsedFrontMatter = frontMatter(contents);
@@ -55,14 +55,15 @@ function getTitleFromMarkdownContents(contents) {
         );
     }
 
-    const contentStartIndex = markdownParser.getContentStartIndex(titleNode);
-    const contentEndIndex = markdownParser.getContentEndIndex(titleNode);
+    const titleContentStartIndex = markdownParser.getContentStartIndex(titleNode);
+    const titleContentEndIndex = markdownParser.getContentEndIndex(titleNode);
 
-    if (contentStartIndex === contentEndIndex) {
+    if (titleContentStartIndex === titleContentEndIndex) {
         return undefined;
     }
 
-    return contentsWithoutFrontMatter.substring(contentStartIndex, contentEndIndex);
+    // content model for heading is identical to content model for paragraph, so extracting its content gives us a paragraph
+    return contentsWithoutFrontMatter.substring(titleContentStartIndex, titleContentEndIndex);
 }
 
 function getNewMainReadmeContents(currentContents, markdownForTree, environment) {
@@ -157,14 +158,22 @@ function normalizeContents(contents) {
     return adjustedContents;
 }
 
-function getNewDirectoryReadmeContents(title, description, markdownForTree, environment) {
-    const titleHeading = `# ${title}`;
+function getNewDirectoryReadmeContents(
+    titleParagraph,
+    descriptionParagraph,
+    markdownForTree,
+    environment
+) {
+    // this should be safe to do (heading content model is same as paragraph content model) and retains user formatting
+    const titleHeading = `# ${titleParagraph}`;
 
     let partBetweenDescriptionMarkers = environment.endOfLine.repeat(2);
 
-    if (description) {
+    if (descriptionParagraph) {
         partBetweenDescriptionMarkers =
-            environment.endOfLine.repeat(2) + description + environment.endOfLine.repeat(2);
+            environment.endOfLine.repeat(2) +
+            descriptionParagraph +
+            environment.endOfLine.repeat(2);
     }
 
     return (
@@ -181,7 +190,7 @@ function getNewDirectoryReadmeContents(title, description, markdownForTree, envi
     );
 }
 
-function getDirectoryDescriptionFromCurrentContents(currentContents) {
+function getDirectoryDescriptionParagraphFromCurrentContents(currentContents) {
     const astNode = markdownParser.getAstNodeFromMarkdown(currentContents);
 
     const startMarkerNode = markdownParser.getFirstHtmlChildWithValue(

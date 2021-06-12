@@ -16,7 +16,7 @@ module.exports = {
     isSingleMarkdownParagraph,
     removeStrongFromMarkdown,
     escapeText,
-    generateLinkFromMarkdownAndUrl
+    generateLinkFromMarkdownParagraphAndUrl
 };
 
 const mdastCache = new Map();
@@ -148,7 +148,11 @@ function escapeText(text) {
     return mdastUtilToMarkdown(generated).trim();
 }
 
-function generateLinkFromMarkdownAndUrl(markdown, url) {
+function generateLinkFromMarkdownParagraphAndUrl(markdown, url) {
+    if (!isSingleMarkdownParagraph(markdown)) {
+        throw new Error("Link text must be a single paragraph");
+    }
+
     const node = getAstNodeFromMarkdown(markdown);
     const paragraphNode = node.children[0];
 

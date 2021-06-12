@@ -46,12 +46,12 @@ function getTreeNodesForDirectories(directories, relativeParentPath, environment
             const relativePath = path.join(relativeParentPath, directory.name);
             const relativeReadmePath = path.join(relativePath, "README.md");
             const readmeContents = getCurrentContents(relativeReadmePath);
-            const readmeTitle = getTitleFromMarkdownFile(readmeContents, relativeReadmePath);
+            const title = getTitleParagraphFromMarkdownFile(readmeContents, relativeReadmePath);
 
             treeNodes.push({
                 isDirectory: true,
-                title: readmeTitle || markdownParser.escapeText(directory.name),
-                description: getDescriptionFromDirectoryReadmeContents(
+                titleParagraph: title || markdownParser.escapeText(directory.name),
+                descriptionParagraph: getDescriptionParaghraphFromDirectoryReadmeContents(
                     readmeContents,
                     relativeReadmePath
                 ),
@@ -74,14 +74,16 @@ function getTreeNodesForFiles(files, relativeParentPath, environment) {
 
             treeNodes.push({
                 isDirectory: false,
-                title: getTitleFromMarkdownFileOrThrow(contents, relativePath),
+                titleParagraph: getTitleParagraphFromMarkdownFileOrThrow(contents, relativePath),
                 filename: file.name
             });
         }
     }
 
     if (environment.options.orderNotesByTitle) {
-        treeNodes.sort((a, b) => stringUtils.compareIgnoringCaseAndDiacritics(a.title, b.title));
+        treeNodes.sort((a, b) =>
+            stringUtils.compareIgnoringCaseAndDiacritics(a.titleParagraph, b.titleParagraph)
+        );
     }
 
     return treeNodes;
@@ -97,26 +99,26 @@ function getCurrentContents(relativePath) {
     return fs.readFileSync(absolutePath, { encoding: "utf-8" });
 }
 
-function getDescriptionFromDirectoryReadmeContents(contents, relativePath) {
+function getDescriptionParaghraphFromDirectoryReadmeContents(contents, relativePath) {
     try {
-        return fileContents.getDirectoryDescriptionFromCurrentContents(contents);
+        return fileContents.getDirectoryDescriptionParagraphFromCurrentContents(contents);
     } catch (error) {
         const absolutePath = pathUtils.getAbsolutePath(relativePath);
         throw new Error(`Cannot get description from file ${absolutePath}: ${error.message}`);
     }
 }
 
-function getTitleFromMarkdownFile(contents, relativePath) {
+function getTitleParagraphFromMarkdownFile(contents, relativePath) {
     try {
-        return fileContents.getTitleFromMarkdownContents(contents);
+        return fileContents.getTitleParagraphFromContents(contents);
     } catch (error) {
         const absolutePath = pathUtils.getAbsolutePath(relativePath);
         throw new Error(`Cannot get title from file ${absolutePath}: ${error.message}`);
     }
 }
 
-function getTitleFromMarkdownFileOrThrow(contents, relativePath) {
-    const title = getTitleFromMarkdownFile(contents, relativePath);
+function getTitleParagraphFromMarkdownFileOrThrow(contents, relativePath) {
+    const title = getTitleParagraphFromMarkdownFile(contents, relativePath);
 
     if (!title) {
         const absolutePath = pathUtils.getAbsolutePath(relativePath);

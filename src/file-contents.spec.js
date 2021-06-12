@@ -7,35 +7,35 @@ const fileContents = require("./file-contents");
 describe("fileContents", () => {
     const endOfLine = "\n";
 
-    describe("getTitleFromMarkdownContents", () => {
+    describe("getTitleParagraphFromContents", () => {
         test("it should handle empty files", () => {
             const contents = "";
-            expect(fileContents.getTitleFromMarkdownContents(contents)).toBeUndefined();
+            expect(fileContents.getTitleParagraphFromContents(contents)).toBeUndefined();
         });
 
         test("it should handle empty title", () => {
             const contents = "# ";
-            expect(fileContents.getTitleFromMarkdownContents(contents)).toBeUndefined();
+            expect(fileContents.getTitleParagraphFromContents(contents)).toBeUndefined();
         });
 
         test("it should support CRLF line endings", () => {
             const contents = "# test" + "\r\n" + "second line";
-            expect(fileContents.getTitleFromMarkdownContents(contents)).toBe("test");
+            expect(fileContents.getTitleParagraphFromContents(contents)).toBe("test");
         });
 
         test("it should support LF line endings", () => {
             const contents = "# test" + "\n" + "second line";
-            expect(fileContents.getTitleFromMarkdownContents(contents)).toBe("test");
+            expect(fileContents.getTitleParagraphFromContents(contents)).toBe("test");
         });
 
         test("it should support CR line endings", () => {
             const contents = "# test" + "\r" + "second line";
-            expect(fileContents.getTitleFromMarkdownContents(contents)).toBe("test");
+            expect(fileContents.getTitleParagraphFromContents(contents)).toBe("test");
         });
 
         test("it should ignore starting empty lines", () => {
             const contents = "\n" + "\n" + "# test";
-            expect(fileContents.getTitleFromMarkdownContents(contents)).toBe("test");
+            expect(fileContents.getTitleParagraphFromContents(contents)).toBe("test");
         });
 
         test("it should ignore the directory README start marker", () => {
@@ -45,7 +45,7 @@ describe("fileContents", () => {
                 # test`
             );
 
-            expect(fileContents.getTitleFromMarkdownContents(contents)).toBe("test");
+            expect(fileContents.getTitleParagraphFromContents(contents)).toBe("test");
         });
 
         test("it should ignore the old directory README start marker", () => {
@@ -55,7 +55,7 @@ describe("fileContents", () => {
                 # test`
             );
 
-            expect(fileContents.getTitleFromMarkdownContents(contents)).toBe("test");
+            expect(fileContents.getTitleParagraphFromContents(contents)).toBe("test");
         });
 
         test("it should return the tree title from YAML front matter if available", () => {
@@ -68,7 +68,7 @@ describe("fileContents", () => {
                 second line`
             );
 
-            expect(fileContents.getTitleFromMarkdownContents(contents)).toBe("TreeTitle");
+            expect(fileContents.getTitleParagraphFromContents(contents)).toBe("TreeTitle");
         });
 
         test("it should ignore YAML front matter that has no tree_title attribute", () => {
@@ -81,12 +81,12 @@ describe("fileContents", () => {
                 second line`
             );
 
-            expect(fileContents.getTitleFromMarkdownContents(contents)).toBe("test");
+            expect(fileContents.getTitleParagraphFromContents(contents)).toBe("test");
         });
 
         test("it should return undefined if the file doesn't have a title", () => {
             const contents = "some non-title content";
-            expect(fileContents.getTitleFromMarkdownContents(contents)).toBeUndefined();
+            expect(fileContents.getTitleParagraphFromContents(contents)).toBeUndefined();
         });
 
         test("it should support content before the title", () => {
@@ -98,7 +98,7 @@ describe("fileContents", () => {
                 some other content`
             );
 
-            expect(fileContents.getTitleFromMarkdownContents(contents)).toBe("test");
+            expect(fileContents.getTitleParagraphFromContents(contents)).toBe("test");
         });
 
         test("it should fail if title contains content that is not supported inside links", () => {
@@ -108,7 +108,7 @@ describe("fileContents", () => {
                 some other content`
             );
 
-            expect(() => fileContents.getTitleFromMarkdownContents(contents)).toThrow(
+            expect(() => fileContents.getTitleParagraphFromContents(contents)).toThrow(
                 "Title cannot contain Markdown links since this would mess up the links in the tree (consider using HTML as a workaround)"
             );
         });
@@ -343,10 +343,13 @@ describe("fileContents", () => {
         });
     });
 
-    describe("getDirectoryDescriptionFromCurrentContents", () => {
+    describe("getDirectoryDescriptionParagraphFromCurrentContents", () => {
         test("it should handle empty current contents", () => {
             const currentContents = "";
-            const result = fileContents.getDirectoryDescriptionFromCurrentContents(currentContents);
+
+            const result = fileContents.getDirectoryDescriptionParagraphFromCurrentContents(
+                currentContents
+            );
             expect(result).toBe("");
         });
 
@@ -358,7 +361,10 @@ describe("fileContents", () => {
                 
                 markdownForTree`) + endOfLine;
 
-            const result = fileContents.getDirectoryDescriptionFromCurrentContents(currentContents);
+            const result = fileContents.getDirectoryDescriptionParagraphFromCurrentContents(
+                currentContents
+            );
+
             expect(result).toBe("");
         });
 
@@ -374,7 +380,10 @@ describe("fileContents", () => {
                 
                 markdownForTree`) + endOfLine;
 
-            const result = fileContents.getDirectoryDescriptionFromCurrentContents(currentContents);
+            const result = fileContents.getDirectoryDescriptionParagraphFromCurrentContents(
+                currentContents
+            );
+
             expect(result).toBe("");
         });
 
@@ -392,7 +401,10 @@ describe("fileContents", () => {
                 
                 markdownForTree`) + endOfLine;
 
-            const result = fileContents.getDirectoryDescriptionFromCurrentContents(currentContents);
+            const result = fileContents.getDirectoryDescriptionParagraphFromCurrentContents(
+                currentContents
+            );
+
             expect(result).toBe("This is a description.");
         });
 
@@ -410,7 +422,10 @@ describe("fileContents", () => {
                 
                 markdownForTree`) + endOfLine;
 
-            const result = fileContents.getDirectoryDescriptionFromCurrentContents(currentContents);
+            const result = fileContents.getDirectoryDescriptionParagraphFromCurrentContents(
+                currentContents
+            );
+
             expect(result).toBe("This is a description.");
         });
 
@@ -427,7 +442,7 @@ describe("fileContents", () => {
                 markdownForTree`) + endOfLine;
 
             expect(() =>
-                fileContents.getDirectoryDescriptionFromCurrentContents(currentContents)
+                fileContents.getDirectoryDescriptionParagraphFromCurrentContents(currentContents)
             ).toThrow(
                 "Invalid file structure: only one description marker found or end marker found before start marker"
             );
@@ -452,7 +467,7 @@ describe("fileContents", () => {
                 markdownForTree`) + endOfLine;
 
             expect(() =>
-                fileContents.getDirectoryDescriptionFromCurrentContents(currentContents)
+                fileContents.getDirectoryDescriptionParagraphFromCurrentContents(currentContents)
             ).toThrow("Subdirectory description should be just a single paragraph");
         });
     });

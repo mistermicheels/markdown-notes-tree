@@ -34,8 +34,8 @@ function writeTreesForDirectories(mainTree, environment) {
         if (treeNode.isDirectory) {
             writeTreesForDirectory(
                 [treeNode.filename],
-                treeNode.title,
-                treeNode.description,
+                treeNode.titleParagraph,
+                treeNode.descriptionParagraph,
                 treeNode.children,
                 environment
             );
@@ -43,15 +43,27 @@ function writeTreesForDirectories(mainTree, environment) {
     }
 }
 
-function writeTreesForDirectory(pathParts, title, description, treeForDirectory, environment) {
-    writeTreeToDirectoryReadme(pathParts, title, description, treeForDirectory, environment);
+function writeTreesForDirectory(
+    pathParts,
+    titleParagraph,
+    descriptionParagraph,
+    treeForDirectory,
+    environment
+) {
+    writeTreeToDirectoryReadme(
+        pathParts,
+        titleParagraph,
+        descriptionParagraph,
+        treeForDirectory,
+        environment
+    );
 
     for (const treeNode of treeForDirectory) {
         if (treeNode.isDirectory) {
             writeTreesForDirectory(
                 [...pathParts, treeNode.filename],
-                treeNode.title,
-                treeNode.description,
+                treeNode.titleParagraph,
+                treeNode.descriptionParagraph,
                 treeNode.children,
                 environment
             );
@@ -59,7 +71,13 @@ function writeTreesForDirectory(pathParts, title, description, treeForDirectory,
     }
 }
 
-function writeTreeToDirectoryReadme(pathParts, title, description, treeForDirectory, environment) {
+function writeTreeToDirectoryReadme(
+    pathParts,
+    titleParagraph,
+    descriptionParagraph,
+    treeForDirectory,
+    environment
+) {
     const filePathParts = [...pathParts, "README.md"];
     const relativeFilePath = path.join(...filePathParts);
     const absoluteFilePath = pathUtils.getAbsolutePath(relativeFilePath);
@@ -73,8 +91,8 @@ function writeTreeToDirectoryReadme(pathParts, title, description, treeForDirect
     const markdownForTree = treeMarkdownGenerator.getMarkdownForTree(treeForDirectory, environment);
 
     const newContents = fileContents.getNewDirectoryReadmeContents(
-        title,
-        description,
+        titleParagraph,
+        descriptionParagraph,
         markdownForTree,
         environment
     );

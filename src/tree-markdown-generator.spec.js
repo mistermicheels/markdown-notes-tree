@@ -9,12 +9,12 @@ describe("treeMarkdownGenerator", () => {
         const tree = [
             {
                 isDirectory: true,
-                title: "sub1",
+                titleParagraph: "sub1",
                 filename: "sub1",
                 children: [
                     {
                         isDirectory: false,
-                        title: "Title for file1a",
+                        titleParagraph: "Title for file1a",
                         filename: "file1a.md"
                     }
                 ]
@@ -72,20 +72,20 @@ describe("treeMarkdownGenerator", () => {
             const treeIncludingFolderDescription = [
                 {
                     isDirectory: true,
-                    title: "sub1",
-                    description: "description1",
+                    titleParagraph: "sub1",
+                    descriptionParagraph: "description1",
                     filename: "sub1",
                     children: [
                         {
                             isDirectory: true,
-                            title: "sub1a",
-                            description: "description1a",
+                            titleParagraph: "sub1a",
+                            descriptionParagraph: "description1a",
                             filename: "sub1a",
                             children: []
                         },
                         {
                             isDirectory: false,
-                            title: "Title for file1a",
+                            titleParagraph: "Title for file1a",
                             filename: "file1a.md"
                         }
                     ]
