@@ -1,3 +1,9 @@
+Project status:
+
+-   ✅ Actively maintained
+-   🐢 Limited bandwidth
+-   🔒 Not looking for code contributions from other developers
+
 # markdown-notes-tree
 
 [![npm](https://img.shields.io/npm/v/markdown-notes-tree?style=flat)](https://www.npmjs.com/package/markdown-notes-tree)
