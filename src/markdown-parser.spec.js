@@ -8,8 +8,6 @@ describe("markdownParser", () => {
 
         expect(markdownParser.getStartIndex(level1Heading)).toBe(0);
         expect(markdownParser.getEndIndex(level1Heading)).toBe(6);
-        expect(markdownParser.getContentStartIndex(level1Heading)).toBe(2);
-        expect(markdownParser.getContentEndIndex(level1Heading)).toBe(6);
     });
 
     test("it can find HTML comments", () => {
@@ -23,8 +21,6 @@ describe("markdownParser", () => {
 
         expect(markdownParser.getStartIndex(htmlComment)).toBe(7);
         expect(markdownParser.getEndIndex(htmlComment)).toBe(31);
-        expect(markdownParser.getContentStartIndex(htmlComment)).toBe(31);
-        expect(markdownParser.getContentEndIndex(htmlComment)).toBe(31);
     });
 
     describe("hasLinkDescendant", () => {

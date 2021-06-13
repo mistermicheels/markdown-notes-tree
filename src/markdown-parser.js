@@ -11,8 +11,6 @@ module.exports = {
     getAllHtmlChildrenWithValues,
     getStartIndex,
     getEndIndex,
-    getContentStartIndex,
-    getContentEndIndex,
     extractParagraphFromHeadingNode,
     isSingleMarkdownParagraph,
     removeStrongFromMarkdown,
@@ -76,24 +74,6 @@ function getStartIndex(node) {
 
 function getEndIndex(node) {
     return node.position.end.offset;
-}
-
-function getContentStartIndex(node) {
-    if (!node.children || !node.children.length) {
-        return getEndIndex(node);
-    }
-
-    const firstChild = node.children[0];
-    return getStartIndex(firstChild);
-}
-
-function getContentEndIndex(node) {
-    if (!node.children || !node.children.length) {
-        return getEndIndex(node);
-    }
-
-    const lastChild = node.children[node.children.length - 1];
-    return getEndIndex(lastChild);
 }
 
 function extractParagraphFromHeadingNode(node) {
