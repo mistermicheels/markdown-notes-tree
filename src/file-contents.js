@@ -170,8 +170,11 @@ function getNewDirectoryReadmeContents(
         const indexEndOfDescriptionEndMarker = markdownParser.getEndIndex(descriptionEndMarkerNode);
         contentsUntilEndOfMarkers = currentContents.substring(0, indexEndOfDescriptionEndMarker);
     } else {
-        // this should be safe to do (heading content model is same as paragraph content model) and retains user formatting
-        const titleHeading = `# ${titleParagraph}`;
+        // we generate entire file from scratch, don't care about preserving user's formatting of title.
+        // we might have lost that formatting during title extraction anyway
+        const titleHeading = markdownParser.generateLevel1HeadingFromMarkdownParagraph(
+            titleParagraph
+        );
 
         contentsUntilEndOfMarkers =
             markers.directoryReadmeStart +

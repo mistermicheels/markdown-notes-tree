@@ -18,7 +18,8 @@ module.exports = {
     removeStrongFromMarkdown,
     escapeText,
     generateLinkFromMarkdownParagraphAndUrl,
-    generateStrongParagraphFromMarkdownParagraph
+    generateStrongParagraphFromMarkdownParagraph,
+    generateLevel1HeadingFromMarkdownParagraph
 };
 
 const mdastCache = new Map();
@@ -210,6 +211,28 @@ function generateStrongParagraphFromMarkdownParagraph(markdown) {
                         children: paragraphNode.children.map(markAsGenerated)
                     }
                 ]
+            }
+        ]
+    };
+
+    return mdastUtilToMarkdown(generated).trim();
+}
+
+function generateLevel1HeadingFromMarkdownParagraph(markdown) {
+    if (!isSingleMarkdownParagraph(markdown)) {
+        throw new Error("Link text must be a single paragraph");
+    }
+
+    const node = getAstNodeFromMarkdown(markdown);
+    const paragraphNode = node.children[0];
+
+    const generated = {
+        type: "root",
+        children: [
+            {
+                type: "heading",
+                depth: 1,
+                children: paragraphNode.children.map(markAsGenerated)
             }
         ]
     };
