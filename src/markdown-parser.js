@@ -97,6 +97,10 @@ function getContentEndIndex(node) {
 }
 
 function extractParagraphFromHeadingNode(node) {
+    if (node.type !== "heading") {
+        throw new Error("Provided node must be a heading");
+    }
+
     const extracted = {
         type: "root",
         children: [
