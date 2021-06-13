@@ -50,10 +50,12 @@ function getMarkdownForTreeNode(treeNode, parentPath, environment) {
     const linkParagraphText = getLinkParagraphTextForTreeNode(treeNode);
     const linkTarget = getLinkTargetForTreeNode(treeNode, parentPath, environment);
 
-    const basicLine = `- ${markdownParser.generateLinkFromMarkdownParagraphAndUrl(
+    const markdownForLink = markdownParser.generateLinkFromMarkdownParagraphAndUrl(
         linkParagraphText,
         linkTarget
-    )}`;
+    );
+
+    const basicLine = `- ${markdownForLink}`;
 
     if (treeNode.descriptionParagraph) {
         const descriptionSeparator = getDescriptionSeparator(environment);
