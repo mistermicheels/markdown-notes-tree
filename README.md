@@ -10,6 +10,10 @@ Project status:
 
 If you have a folder structure with Markdown notes, you can use this tool to generate Markdown trees that act as a table of contents for the folder structure.
 
+[Example input and expected result](test-data/basics)
+
+[Real-life example](https://github.com/mistermicheels/learning-notes#readme)
+
 By default, the tool does the following:
 
 -   Append a complete tree to the main `README.md` file (in the directory where the tool is executed)
@@ -18,8 +22,6 @@ By default, the tool does the following:
 You can run the tool again and again without changing the result. Once a tree has been written to your main `README.md` file, you can add anything below the tree (or move the tree) and the tool will respect the tree's boundaries.
 
 Of course, it is recommended to run the tool again every time you make changes to the Markdown notes in your folder structure. It can be useful to include the tool in build scripts or pre-commit hooks.
-
-[Example input and result](test-data/basics)
 
 ## Install
 
