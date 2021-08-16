@@ -170,8 +170,8 @@ function getNewDirectoryReadmeContents(
         const indexEndOfDescriptionEndMarker = markdownParser.getEndIndex(descriptionEndMarkerNode);
         contentsUntilEndOfMarkers = currentContents.substring(0, indexEndOfDescriptionEndMarker);
     } else {
-        // we generate entire file from scratch, don't care about preserving user's formatting of title.
-        // we might have lost that formatting during title extraction anyway
+        // we generate entire file from scratch, don't care about preserving user's formatting syntax for the title.
+        // we might have lost that formatting syntax during title extraction anyway.
         const titleHeading = markdownParser.generateLevel1HeadingFromMarkdownParagraph(
             titleParagraph
         );

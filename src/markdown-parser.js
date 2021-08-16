@@ -100,7 +100,7 @@ function isSingleMarkdownParagraph(markdown) {
 }
 
 /**
- * Note: this might alter other Markdown formatting (for example, * vs _ for emphasis)
+ * Note: this might alter other Markdown formatting syntax (for example, * vs _ for emphasis)
  */
 function removeStrongFromMarkdown(markdown) {
     const node = getAstNodeFromMarkdown(markdown);
