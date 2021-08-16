@@ -167,11 +167,13 @@ function getNewDirectoryReadmeContents(
     let contentsUntilEndOfMarkers;
 
     if (descriptionEndMarkerNode) {
+        // the file already existed and the user might have adjusted title, description, ...
+        // preserve the exact contents of the user-managed part of the file (everything until end of description)
         const indexEndOfDescriptionEndMarker = markdownParser.getEndIndex(descriptionEndMarkerNode);
         contentsUntilEndOfMarkers = currentContents.substring(0, indexEndOfDescriptionEndMarker);
     } else {
-        // we generate entire file from scratch, don't care about preserving user's formatting syntax for the title.
-        // we might have lost that formatting syntax during title extraction anyway.
+        // the file did not exist yet or was created with an old version of the tool
+        // generate file from scratch, don't care about preserving formatting syntax
         const titleHeading = markdownParser.generateLevel1HeadingFromMarkdownParagraph(
             titleParagraph
         );
