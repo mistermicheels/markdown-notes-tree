@@ -178,7 +178,7 @@ function generateLinkFromMarkdownParagraphAndUrl(markdown, url) {
 
 function generateStrongParagraphFromMarkdownParagraph(markdown) {
     if (!isSingleMarkdownParagraph(markdown)) {
-        throw new Error("Link text must be a single paragraph");
+        throw new Error("Paragraph text must be a single paragraph");
     }
 
     const node = getAstNodeFromMarkdown(markdown);
@@ -204,7 +204,7 @@ function generateStrongParagraphFromMarkdownParagraph(markdown) {
 
 function generateLevel1HeadingFromMarkdownParagraph(markdown) {
     if (!isSingleMarkdownParagraph(markdown)) {
-        throw new Error("Link text must be a single paragraph");
+        throw new Error("Heading text must be a single paragraph");
     }
 
     const node = getAstNodeFromMarkdown(markdown);
