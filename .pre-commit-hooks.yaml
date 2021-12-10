@@ -1,0 +1,5 @@
+- id: markdown-notes-tree
+  name: markdown-notes-tree
+  description: This hook generates Markdown trees that act as a table of contents for a folder structure.
+  entry: markdown-notes-tree
+  language: node
