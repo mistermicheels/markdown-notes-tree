@@ -99,6 +99,12 @@ If a directory contains both notes and subdirectories, put the notes before the 
 
 Example: `markdown-notes-tree --notesBeforeDirectories`
 
+### `--numberSpaces`
+
+Specify the number of spaces to use for indentation (the default is 4).
+
+Example: `markdown-notes-tree --numberSpaces 2`
+
 ### `--orderNotesByTitle`
 
 Order notes in the same (sub)directory by title instead of by filename.

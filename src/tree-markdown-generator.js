@@ -42,7 +42,7 @@ function getIndentationUnit(environment) {
     if (environment.options.useTabs) {
         return "\t";
     } else {
-        return " ".repeat(4);
+        return " ".repeat(environment.options.numberSpaces);
     }
 }
 

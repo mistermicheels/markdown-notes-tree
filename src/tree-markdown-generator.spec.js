@@ -26,6 +26,7 @@ describe("treeMarkdownGenerator", () => {
                 endOfLine,
                 options: {
                     linkToSubdirectoryReadme: false,
+                    numberSpaces: 4,
                     useTabs: false
                 }
             });
@@ -41,6 +42,7 @@ describe("treeMarkdownGenerator", () => {
                 endOfLine,
                 options: {
                     linkToSubdirectoryReadme: true,
+                    numberSpaces: 4,
                     useTabs: false
                 }
             });
@@ -49,6 +51,22 @@ describe("treeMarkdownGenerator", () => {
                 "- [**sub1**](sub1/README.md)" +
                 endOfLine +
                 "    - [Title for file1a](sub1/file1a.md)";
+
+            expect(result).toEqual(expected);
+        });
+
+        test("it should allow configuring the number of spaces", () => {
+            const result = treeMarkdownGenerator.getMarkdownForTree(tree, {
+                endOfLine,
+                options: {
+                    linkToSubdirectoryReadme: false,
+                    numberSpaces: 2,
+                    useTabs: false
+                }
+            });
+
+            const expected =
+                "- [**sub1**](sub1)" + endOfLine + "  - [Title for file1a](sub1/file1a.md)";
 
             expect(result).toEqual(expected);
         });
@@ -99,6 +117,7 @@ describe("treeMarkdownGenerator", () => {
                         endOfLine,
                         options: {
                             linkToSubdirectoryReadme: false,
+                            numberSpaces: 4,
                             subdirectoryDescriptionOnNewLine: false,
                             useTabs: false
                         }
@@ -122,6 +141,7 @@ describe("treeMarkdownGenerator", () => {
                         endOfLine,
                         options: {
                             linkToSubdirectoryReadme: false,
+                            numberSpaces: 4,
                             subdirectoryDescriptionOnNewLine: true,
                             useTabs: false
                         }

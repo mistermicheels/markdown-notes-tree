@@ -33,6 +33,12 @@ describe("optionsParser", () => {
             expect(options.linkToSubdirectoryReadme).toBe(true);
         });
 
+        test("it should allow passing numeric options", () => {
+            const options = optionsParser.getOptions(["--numberSpaces", "2"]);
+
+            expect(options.numberSpaces).toBe(2);
+        });
+
         test("it should allow combining different options", () => {
             const options = optionsParser.getOptions([
                 "--ignore",

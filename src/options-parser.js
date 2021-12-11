@@ -8,6 +8,7 @@ const defaultOptions = {
     linkToSubdirectoryReadme: false,
     noSubdirectoryTrees: false,
     notesBeforeDirectories: false,
+    numberSpaces: 4,
     orderNotesByTitle: false,
     silent: false,
     subdirectoryDescriptionOnNewLine: false,
