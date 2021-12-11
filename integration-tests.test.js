@@ -128,6 +128,10 @@ describe("markdown-notes-tree", () => {
         executeTestScenario("notes-before-directories", ["--notesBeforeDirectories"]);
     });
 
+    test("it should allow adjusting the number of spaces", () => {
+        executeTestScenario("number-spaces-two", ["--numberSpaces", "2"]);
+    });
+
     test("it should allow ordering notes by title", () => {
         executeTestScenario("order-notes-by-title", ["--orderNotesByTitle"]);
     });
