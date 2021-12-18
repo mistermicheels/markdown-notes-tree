@@ -29,6 +29,18 @@ Of course, it is recommended to run the tool again every time you make changes t
 npm install -D markdown-notes-tree
 ```
 
+Not using Node for your project? You can install `markdown-notes-tree` globally, or you can even add it as a [pre-commit plugin](https://pre-commit.com/#plugins).
+
+Example pre-commit configuration:
+
+```
+repos:
+-   repo: https://github.com/mistermicheels/markdown-notes-tree
+    rev: v1.12.0
+    hooks:
+    -   id: markdown-notes-tree
+```
+
 ## Use
 
 You can run the tool by running `npx markdown-notes-tree` from the command line or invoking `markdown-notes-tree` from an npm script.
