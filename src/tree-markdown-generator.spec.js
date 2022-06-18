@@ -27,7 +27,8 @@ describe("treeMarkdownGenerator", () => {
                 options: {
                     linkToSubdirectoryReadme: false,
                     numberSpaces: 4,
-                    useTabs: false
+                  useTabs: false,
+                  readmeFileName: 'Home.md'
                 }
             });
 
@@ -43,12 +44,13 @@ describe("treeMarkdownGenerator", () => {
                 options: {
                     linkToSubdirectoryReadme: true,
                     numberSpaces: 4,
-                    useTabs: false
+                  useTabs: false,
+                  readmeFileName: 'Home.md'
                 }
             });
 
-            const expected =
-                "- [**sub1**](sub1/README.md)" +
+          const expected =
+                "- [**sub1**](sub1/Home.md)"+
                 endOfLine +
                 "    - [Title for file1a](sub1/file1a.md)";
 

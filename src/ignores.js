@@ -22,7 +22,7 @@ function shouldIgnoreDirectoryBasedOnName(name, environment) {
 }
 
 function shouldIgnoreFile(name, relativeParentPath, environment) {
-    if (!name.endsWith(".md") || name === "README.md") {
+  if (!name.endsWith(".md") || name === environment.options.readmeFileName){
         return true;
     }
 
