@@ -140,6 +140,10 @@ describe("markdown-notes-tree", () => {
         executeTestScenario("order-notes-by-title", ["--orderNotesByTitle"]);
     });
 
+    test("it should allow using a custom README filename", () => {
+        executeTestScenario("readme-filename", ["--readmeFilename", "README_FILENAME.md"]);
+    });
+
     test("it should allow disabling logging", () => {
         const expectedLogs = [];
 

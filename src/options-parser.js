@@ -11,6 +11,7 @@ const defaultOptions = {
     notesBeforeDirectories: false,
     numberSpaces: 4,
     orderNotesByTitle: false,
+    readmeFilename: "README.md",
     silent: false,
     subdirectoryDescriptionOnNewLine: false,
     useTabs: false

@@ -84,7 +84,7 @@ function getLinkTargetForTreeNode(treeNode, parentPathParts, environment) {
     let linkTarget = fullPathParts.join("/");
 
     if (treeNode.isDirectory && environment.options.linkToSubdirectoryReadme) {
-        linkTarget = linkTarget + "/README.md";
+        linkTarget = linkTarget + "/" + environment.options.readmeFilename;
     }
 
     return linkTarget;

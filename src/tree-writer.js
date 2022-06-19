@@ -10,7 +10,7 @@ const treeMarkdownGenerator = require("./tree-markdown-generator");
 module.exports = { writeTreeToMainReadme, writeTreesForDirectories };
 
 function writeTreeToMainReadme(tree, environment) {
-    const mainReadmePath = pathUtils.getAbsolutePath("README.md");
+    const mainReadmePath = pathUtils.getAbsolutePath(environment.options.readmeFilename);
     const currentContents = fs.readFileSync(mainReadmePath, { encoding: "utf-8" });
     const markdownForTree = treeMarkdownGenerator.getMarkdownForTree(tree, environment);
 
@@ -58,7 +58,7 @@ function writeTreesForDirectory(pathParts, titleParagraph, treeForDirectory, env
 }
 
 function writeTreeToDirectoryReadme(pathParts, titleParagraph, treeForDirectory, environment) {
-    const filePathParts = [...pathParts, "README.md"];
+    const filePathParts = [...pathParts, environment.options.readmeFilename];
     const relativeFilePath = path.join(...filePathParts);
     const absoluteFilePath = pathUtils.getAbsolutePath(relativeFilePath);
 

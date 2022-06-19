@@ -93,10 +93,12 @@ describe("ignores", () => {
             expect(ignores.shouldIgnoreFile("test.js", "", { options: { ignore: [] } })).toBe(true);
         });
 
-        test("it should return true for README.md files", () => {
-            expect(ignores.shouldIgnoreFile("README.md", "", { options: { ignore: [] } })).toBe(
-                true
-            );
+        test("it should return true for README files", () => {
+            expect(
+                ignores.shouldIgnoreFile("README_FILENAME.md", "", {
+                    options: { ignore: [], readmeFilename: "README_FILENAME.md" }
+                })
+            ).toBe(true);
         });
 
         test("it should return true if the file matches an ignored glob", () => {

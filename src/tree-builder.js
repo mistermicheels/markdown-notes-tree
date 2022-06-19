@@ -44,7 +44,7 @@ function getTreeNodesForDirectories(directories, relativeParentPath, environment
     for (const directory of directories) {
         if (!ignores.shouldIgnoreDirectory(directory.name, relativeParentPath, environment)) {
             const relativePath = path.join(relativeParentPath, directory.name);
-            const relativeReadmePath = path.join(relativePath, "README.md");
+            const relativeReadmePath = path.join(relativePath, environment.options.readmeFilename);
             const readmeContents = getCurrentContents(relativeReadmePath);
             const title = getTitleParagraphFromMarkdownFile(readmeContents, relativeReadmePath);
 

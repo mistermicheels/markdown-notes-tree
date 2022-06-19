@@ -43,12 +43,13 @@ describe("treeMarkdownGenerator", () => {
                 options: {
                     linkToSubdirectoryReadme: true,
                     numberSpaces: 4,
+                    readmeFilename: "README_FILENAME.md",
                     useTabs: false
                 }
             });
 
             const expected =
-                "- [**sub1**](sub1/README.md)" +
+                "- [**sub1**](sub1/README_FILENAME.md)" +
                 endOfLine +
                 "    - [Title for file1a](sub1/file1a.md)";
 

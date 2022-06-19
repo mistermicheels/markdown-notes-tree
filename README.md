@@ -129,6 +129,12 @@ Order notes in the same (sub)directory by title instead of by filename.
 
 Example: `markdown-notes-tree --orderNotesByTitle`
 
+### `--readmeFilename`
+
+Filename to use for README files (both the main README file and subdirectory README files). The default is `README.md`.
+
+Example: `markdown-notes-tree --readmeFilename Home.md`
+
 ### `--silent`
 
 Don't log to the console during execution.
