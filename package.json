@@ -9,7 +9,8 @@
     "scripts": {
         "test": "jest --collectCoverage",
         "check-formatting": "prettier-check *.js src/*.js",
-        "build": "npm run check-formatting && npm run test"
+        "build": "npm run check-formatting && npm run test",
+        "prepublishOnly": "pubcop --checks tag"
     },
     "keywords": [
         "markdown",
@@ -35,7 +36,8 @@
         "fs-extra": "^8.1.0",
         "jest": "^27.2.0",
         "prettier": "^1.19.1",
-        "prettier-check": "^2.0.0"
+        "prettier-check": "^2.0.0",
+        "pubcop": "^1.0.2"
     },
     "dependencies": {
         "front-matter": "^4.0.2",
