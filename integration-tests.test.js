@@ -23,6 +23,10 @@ describe("markdown-notes-tree", () => {
         executeTestScenario("basics", [], expectedLogs);
     });
 
+    test("it should allow using filename as fallback for missing title", () => {
+        executeTestScenario("allow-missing-title", ["--allowMissingTitle"]);
+    });
+
     test("it should preserve content after the tree in the main README", () => {
         executeTestScenario("content-after-main-tree", []);
     });

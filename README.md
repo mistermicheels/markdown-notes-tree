@@ -77,6 +77,12 @@ If you add content to the generated `README.md` files for subdirectories before 
 
 ## Command line arguments
 
+### `--allowMissingTitle`
+
+Don't throw an error on missing title but instead use the file name as fallback.
+
+Example: `markdown-notes-tree --allowMissingTitle`
+
 ### `--ignore`
 
 Specify glob pattern for additional files or folders to ignore. You can use this argument multiple times in order to specify multiple glob patterns.

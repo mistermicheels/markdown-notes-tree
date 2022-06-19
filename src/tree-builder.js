@@ -74,7 +74,11 @@ function getTreeNodesForFiles(files, relativeParentPath, environment) {
 
             treeNodes.push({
                 isDirectory: false,
-                titleParagraph: getTitleParagraphFromMarkdownFileOrThrow(contents, relativePath),
+                titleParagraph: determineTreeTitleParagraphForMarkdownFile(
+                    contents,
+                    relativePath,
+                    environment
+                ),
                 filename: file.name
             });
         }
@@ -117,13 +121,14 @@ function getTitleParagraphFromMarkdownFile(contents, relativePath) {
     }
 }
 
-function getTitleParagraphFromMarkdownFileOrThrow(contents, relativePath) {
-    const title = getTitleParagraphFromMarkdownFile(contents, relativePath);
+function determineTreeTitleParagraphForMarkdownFile(contents, relativePath, environment) {
+    const titleFromFile = getTitleParagraphFromMarkdownFile(contents, relativePath);
 
-    if (!title) {
+    if (!titleFromFile && !environment.options.allowMissingTitle) {
         const absolutePath = pathUtils.getAbsolutePath(relativePath);
         throw new Error(`No title found for Markdown file ${absolutePath}`);
     }
 
-    return title;
+    const filenameWithoutExtension = path.parse(relativePath).name;
+    return titleFromFile || markdownParser.escapeText(filenameWithoutExtension);
 }

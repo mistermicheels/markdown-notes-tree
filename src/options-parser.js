@@ -3,6 +3,7 @@
 const minimist = require("minimist");
 
 const defaultOptions = {
+    allowMissingTitle: false,
     ignore: [],
     includeAllDirectoriesByDefault: false,
     linkToSubdirectoryReadme: false,
