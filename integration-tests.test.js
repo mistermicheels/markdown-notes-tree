@@ -106,6 +106,17 @@ describe("markdown-notes-tree", () => {
         ]);
     });
 
+    test("it should allow including upward navigation links", () => {
+        executeTestScenario("include-upward-navigation", ["--includeUpwardNavigation"]);
+    });
+
+    test("it should allow including upward navigation links linking directly to README", () => {
+        executeTestScenario("include-upward-navigation-link-to-readme", [
+            "--includeUpwardNavigation",
+            "--linkToSubdirectoryReadme"
+        ]);
+    });
+
     test("it should allow linking directly to subdirectory README files", () => {
         executeTestScenario("link-to-subdirectory-readme", ["--linkToSubdirectoryReadme"]);
     });

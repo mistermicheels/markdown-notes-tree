@@ -73,7 +73,7 @@ By default, the generated `README.md` files for subdirectories use the subdirect
 
 ## Extra content in subdirectory README
 
-If you add content to the generated `README.md` files for subdirectories before the description markers, that content will be preserved. This could be useful for image headers etc.
+If you add content to the generated `README.md` files for subdirectories before the title or between the title and the description, that content will be preserved. This could be useful for image headers etc.
 
 ## Command line arguments
 
@@ -98,6 +98,12 @@ Example: `markdown-notes-tree --ignore exclude-this-folder`
 Include all directories by default (don't apply the default ignored folders listed above). You can combine this with custom ignores as needed.
 
 Example: `markdown-notes-tree --includeAllDirectoriesByDefault --ignore node_modules`
+
+### `--includeUpwardNavigation`
+
+Add "Go one level up" and "Go to top level" links at the top of subdirectory README files. If the `--linkToSubdirectoryReadme` option is enabled, these will link directly to README files. Otherwise, they will link to directories.
+
+Note: By design, `markdown-notes-tree` only ever touches the README files and not the actual notes. Upward navigation links will not be added to the notes.
 
 ### `--linkToSubdirectoryReadme`
 

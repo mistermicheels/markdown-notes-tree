@@ -6,6 +6,7 @@ const defaultOptions = {
     allowMissingTitle: false,
     ignore: [],
     includeAllDirectoriesByDefault: false,
+    includeUpwardNavigation: false,
     linkToSubdirectoryReadme: false,
     noSubdirectoryTrees: false,
     notesBeforeDirectories: false,

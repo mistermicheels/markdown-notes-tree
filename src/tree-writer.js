@@ -58,6 +58,8 @@ function writeTreesForDirectory(pathParts, titleParagraph, treeForDirectory, env
 }
 
 function writeTreeToDirectoryReadme(pathParts, titleParagraph, treeForDirectory, environment) {
+    const upwardNavigationPaths = getUpwardNavigationPaths(pathParts, environment);
+
     const filePathParts = [...pathParts, environment.options.readmeFilename];
     const relativeFilePath = path.join(...filePathParts);
     const absoluteFilePath = pathUtils.getAbsolutePath(relativeFilePath);
@@ -72,6 +74,7 @@ function writeTreeToDirectoryReadme(pathParts, titleParagraph, treeForDirectory,
 
     const newContents = fileContents.getNewDirectoryReadmeContents(
         titleParagraph,
+        upwardNavigationPaths,
         currentContents,
         markdownForTree,
         environment
@@ -79,4 +82,22 @@ function writeTreeToDirectoryReadme(pathParts, titleParagraph, treeForDirectory,
 
     environment.logger(`Writing to ${absoluteFilePath}`);
     fs.writeFileSync(absoluteFilePath, newContents, { encoding: "utf-8" });
+}
+
+function getUpwardNavigationPaths(pathParts, environment) {
+    const numberLevels = pathParts.length;
+    const oneLevelUp = "..";
+
+    const toTopLevel = Array(numberLevels)
+        .fill(oneLevelUp)
+        .join("/");
+
+    if (environment.options.linkToSubdirectoryReadme) {
+        return {
+            oneLevelUp: oneLevelUp + "/" + environment.options.readmeFilename,
+            toTopLevel: toTopLevel + "/" + environment.options.readmeFilename
+        };
+    }
+
+    return { oneLevelUp, toTopLevel };
 }
