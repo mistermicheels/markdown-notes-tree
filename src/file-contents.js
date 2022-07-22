@@ -35,9 +35,9 @@ function getMarkerNodes(markers, astNode) {
 }
 
 function getTitleParagraphFromContents(contents) {
-    contents = normalizeContents(contents);
+    const normalizedContents = normalizeContents(contents);
 
-    const parsedFrontMatter = frontMatter(contents);
+    const parsedFrontMatter = frontMatter(normalizedContents);
     const titleFromFrontMatter = parsedFrontMatter.attributes.tree_title;
 
     if (titleFromFrontMatter) {
@@ -63,8 +63,8 @@ function getTitleParagraphFromContents(contents) {
 }
 
 function getNewMainReadmeContents(currentContents, markdownForTree, environment) {
-    currentContents = normalizeContents(currentContents);
-    const astNode = markdownParser.getAstNodeFromMarkdown(currentContents);
+    const normalizedContents = normalizeContents(currentContents);
+    const astNode = markdownParser.getAstNodeFromMarkdown(normalizedContents);
 
     const [treeStartMarkerNode, treeEndMarkerNode] = getMarkerNodes(
         [markers.mainReadmeTreeStart, markers.mainReadmeTreeEnd],
@@ -72,13 +72,13 @@ function getNewMainReadmeContents(currentContents, markdownForTree, environment)
     );
 
     const contentsBeforeTree = getMainReadmeContentsBeforeTree(
-        currentContents,
+        normalizedContents,
         treeStartMarkerNode,
         environment
     );
 
     const contentsAfterTree = getMainReadmeContentsAfterTree(
-        currentContents,
+        normalizedContents,
         treeStartMarkerNode,
         treeEndMarkerNode,
         environment
@@ -155,8 +155,8 @@ function getNewDirectoryReadmeContents(
     markdownForTree,
     environment
 ) {
-    currentContents = normalizeContents(currentContents);
-    const astNode = markdownParser.getAstNodeFromMarkdown(currentContents);
+    const normalizedContents = normalizeContents(currentContents);
+    const astNode = markdownParser.getAstNodeFromMarkdown(normalizedContents);
 
     const descriptionEndMarkerNode = markdownParser.getFirstHtmlChildWithValue(
         markers.directoryReadmeDescriptionEnd,
@@ -169,7 +169,7 @@ function getNewDirectoryReadmeContents(
         // the file already existed and the user might have adjusted title, description, ...
         // preserve the exact contents of the user-managed part of the file (everything until end of description)
         const indexEndOfDescriptionEndMarker = markdownParser.getEndIndex(descriptionEndMarkerNode);
-        contentsUntilEndOfMarkers = currentContents.substring(0, indexEndOfDescriptionEndMarker);
+        contentsUntilEndOfMarkers = normalizedContents.substring(0, indexEndOfDescriptionEndMarker);
     } else {
         // the file did not exist yet or was created with an old version of the tool
         // generate file from scratch, don't care about preserving formatting syntax
