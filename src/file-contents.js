@@ -30,6 +30,10 @@ const legacyToNewMarkersMapping = {
     [markers.directoryReadmeStart_v_1_8_0]: markers.directoryReadmeStart
 };
 
+function getMarkerNodes(markers, astNode) {
+    return markers.map(marker => markdownParser.getFirstHtmlChildWithValue(marker, astNode));
+}
+
 function getTitleParagraphFromContents(contents) {
     contents = normalizeContents(contents);
 
@@ -62,13 +66,8 @@ function getNewMainReadmeContents(currentContents, markdownForTree, environment)
     currentContents = normalizeContents(currentContents);
     const astNode = markdownParser.getAstNodeFromMarkdown(currentContents);
 
-    const treeStartMarkerNode = markdownParser.getFirstHtmlChildWithValue(
-        markers.mainReadmeTreeStart,
-        astNode
-    );
-
-    const treeEndMarkerNode = markdownParser.getFirstHtmlChildWithValue(
-        markers.mainReadmeTreeEnd,
+    const [treeStartMarkerNode, treeEndMarkerNode] = getMarkerNodes(
+        [markers.mainReadmeTreeStart, markers.mainReadmeTreeEnd],
         astNode
     );
 
@@ -199,13 +198,8 @@ function getNewDirectoryReadmeContents(
 function getDirectoryDescriptionParagraphFromCurrentContents(currentContents) {
     const astNode = markdownParser.getAstNodeFromMarkdown(currentContents);
 
-    const startMarkerNode = markdownParser.getFirstHtmlChildWithValue(
-        markers.directoryReadmeDescriptionStart,
-        astNode
-    );
-
-    const endMarkerNode = markdownParser.getFirstHtmlChildWithValue(
-        markers.directoryReadmeDescriptionEnd,
+    const [startMarkerNode, endMarkerNode] = getMarkerNodes(
+        [markers.directoryReadmeDescriptionStart, markers.directoryReadmeDescriptionEnd],
         astNode
     );
 
