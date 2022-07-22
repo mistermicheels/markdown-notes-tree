@@ -158,41 +158,67 @@ function getNewDirectoryReadmeContents(
     const normalizedContents = normalizeContents(currentContents);
     const astNode = markdownParser.getAstNodeFromMarkdown(normalizedContents);
 
-    const descriptionEndMarkerNode = markdownParser.getFirstHtmlChildWithValue(
-        markers.directoryReadmeDescriptionEnd,
+    const startOfFile = markers.directoryReadmeStart;
+
+    const [
+        directoryReadmeStartMarkerNode,
+        directoryReadmeDescriptionEndMarkerNode
+    ] = getMarkerNodes(
+        [markers.directoryReadmeStart, markers.directoryReadmeDescriptionEnd],
         astNode
     );
 
-    let contentsUntilEndOfMarkers;
-
-    if (descriptionEndMarkerNode) {
-        // the file already existed and the user might have adjusted title, description, ...
-        // preserve the exact contents of the user-managed part of the file (everything until end of description)
-        const indexEndOfDescriptionEndMarker = markdownParser.getEndIndex(descriptionEndMarkerNode);
-        contentsUntilEndOfMarkers = normalizedContents.substring(0, indexEndOfDescriptionEndMarker);
-    } else {
-        // the file did not exist yet or was created with an old version of the tool
-        // generate file from scratch, don't care about preserving formatting syntax
-        const titleHeading = markdownParser.generateLevel1HeadingFromMarkdownParagraph(
-            titleParagraph
-        );
-
-        contentsUntilEndOfMarkers =
-            markers.directoryReadmeStart +
-            environment.endOfLine.repeat(2) +
-            titleHeading +
-            environment.endOfLine.repeat(2) +
-            markers.directoryReadmeDescriptionStart +
-            environment.endOfLine.repeat(2) +
-            markers.directoryReadmeDescriptionEnd;
-    }
+    const userManagedContents = getUserManagedDirectoryReadmeContents(
+        normalizedContents,
+        titleParagraph,
+        directoryReadmeStartMarkerNode,
+        directoryReadmeDescriptionEndMarkerNode,
+        environment
+    );
 
     return (
-        contentsUntilEndOfMarkers +
+        startOfFile +
+        environment.endOfLine.repeat(2) +
+        userManagedContents +
         environment.endOfLine.repeat(2) +
         markdownForTree +
         environment.endOfLine
     );
+}
+
+function getUserManagedDirectoryReadmeContents(
+    contents,
+    titleParagraph,
+    directoryReadmeStartMarkerNode,
+    directoryReadmeDescriptionEndMarkerNode,
+    environment
+) {
+    if (!directoryReadmeDescriptionEndMarkerNode) {
+        // the file did not exist yet or was created with an old version of the tool
+        // generate contents from scratch, don't care about preserving formatting syntax
+
+        const titleHeading = markdownParser.generateLevel1HeadingFromMarkdownParagraph(
+            titleParagraph
+        );
+
+        return (
+            titleHeading +
+            environment.endOfLine.repeat(2) +
+            markers.directoryReadmeDescriptionStart +
+            environment.endOfLine.repeat(2) +
+            markers.directoryReadmeDescriptionEnd
+        );
+    }
+
+    // the file already existed and the user might have adjusted title, description, ...
+    // preserve the exact contents of the user-managed part of the file (everything until end of description)
+
+    return contents
+        .substring(
+            markdownParser.getEndIndex(directoryReadmeStartMarkerNode),
+            markdownParser.getEndIndex(directoryReadmeDescriptionEndMarkerNode)
+        )
+        .trim();
 }
 
 function getDirectoryDescriptionParagraphFromCurrentContents(currentContents) {
