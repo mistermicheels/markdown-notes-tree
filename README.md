@@ -105,6 +105,8 @@ Add "Go one level up" and "Go to top level" links at the top of subdirectory REA
 
 Note: By design, `markdown-notes-tree` only ever touches the README files and not the actual notes. Upward navigation links will not be added to the notes.
 
+Example: `markdown-notes-tree --includeUpwardNavigation`
+
 ### `--linkToSubdirectoryReadme`
 
 When linking to a subdirectory, link directly to its `README.md` file. Note that this assumes that each subdirectory will actually have a `README.md` file. By default, the tool generates these automatically.
