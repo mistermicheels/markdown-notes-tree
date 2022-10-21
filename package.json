@@ -43,7 +43,7 @@
         "front-matter": "^4.0.2",
         "mdast-util-from-markdown": "^0.8.5",
         "mdast-util-to-markdown": "^0.6.5",
-        "minimatch": "^3.0.4",
+        "minimatch": "^3.0.5",
         "minimist": "^1.2.5"
     },
     "files": [
