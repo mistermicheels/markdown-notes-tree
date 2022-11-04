@@ -1,26 +1,45 @@
 const markdownParser = require("./markdown-parser");
 
 describe("markdownParser", () => {
-    test("it can find level 1 headings", () => {
-        const markdown = "# Test";
-        const astNode = markdownParser.getAstNodeFromMarkdown(markdown);
-        const level1Heading = markdownParser.getFirstLevel1HeadingChild(astNode);
+    describe("getFirstLevel1HeadingChild", () => {
+        test("it can find level 1 headings", () => {
+            const markdown = "# Test";
+            const astNode = markdownParser.getAstNodeFromMarkdown(markdown);
+            const level1Heading = markdownParser.getFirstLevel1HeadingChild(astNode);
 
-        expect(markdownParser.getStartIndex(level1Heading)).toBe(0);
-        expect(markdownParser.getEndIndex(level1Heading)).toBe(6);
+            expect(markdownParser.getStartIndex(level1Heading)).toBe(0);
+            expect(markdownParser.getEndIndex(level1Heading)).toBe(6);
+        });
+
+        test("it ignores level 2 headings", () => {
+            const markdown = "## Test";
+            const astNode = markdownParser.getAstNodeFromMarkdown(markdown);
+            expect(markdownParser.getFirstLevel1HeadingChild(astNode)).toBeUndefined();
+        });
     });
 
-    test("it can find HTML comments", () => {
-        const markdown = "# Test\n<!-- this was a test -->";
-        const astNode = markdownParser.getAstNodeFromMarkdown(markdown);
+    describe("getFirstHtmlChildWithValue", () => {
+        test("it can find HTML comments", () => {
+            const markdown = "# Test\n<!-- this was a test -->";
+            const astNode = markdownParser.getAstNodeFromMarkdown(markdown);
 
-        const htmlComment = markdownParser.getFirstHtmlChildWithValue(
-            "<!-- this was a test -->",
-            astNode
-        );
+            const htmlComment = markdownParser.getFirstHtmlChildWithValue(
+                "<!-- this was a test -->",
+                astNode
+            );
 
-        expect(markdownParser.getStartIndex(htmlComment)).toBe(7);
-        expect(markdownParser.getEndIndex(htmlComment)).toBe(31);
+            expect(markdownParser.getStartIndex(htmlComment)).toBe(7);
+            expect(markdownParser.getEndIndex(htmlComment)).toBe(31);
+        });
+
+        test("it ignores HTML inside source code blocks", () => {
+            const markdown = "# Test\n```\n<!-- this was a test -->\n```";
+            const astNode = markdownParser.getAstNodeFromMarkdown(markdown);
+
+            expect(
+                markdownParser.getFirstHtmlChildWithValue("<!-- this was a test -->", astNode)
+            ).toBeUndefined();
+        });
     });
 
     describe("hasLinkDescendant", () => {
