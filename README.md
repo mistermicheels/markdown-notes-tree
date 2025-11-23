@@ -36,7 +36,7 @@ Example pre-commit configuration:
 ```
 repos:
 -   repo: https://github.com/mistermicheels/markdown-notes-tree
-    rev: v1.12.0
+    rev: v1.13.1
     hooks:
     -   id: markdown-notes-tree
 ```
